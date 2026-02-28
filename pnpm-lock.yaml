@@ -185,7 +185,7 @@ importers:
   apps/palettai:
     dependencies:
       '@google/generative-ai':
-        specifier: ^0.24.0
+        specifier: ^0.24.1
         version: 0.24.1
       '@radix-ui/react-slot':
         specifier: ^1.1.0
