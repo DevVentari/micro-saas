@@ -28,7 +28,20 @@ export function PaletteDisplay({
   isLoggedIn = false,
   className,
 }: PaletteDisplayProps) {
-  const colorEntries: ColorEntry[] = palette.colors.map((c) => ({
+  const [colors, setColors] = React.useState(palette.colors);
+
+  // Reset when a new palette is generated
+  React.useEffect(() => {
+    setColors(palette.colors);
+  }, [palette]);
+
+  function handleColorChange(index: number, newHex: string) {
+    setColors((prev) =>
+      prev.map((c, i) => (i === index ? { ...c, hex: newHex } : c))
+    );
+  }
+
+  const colorEntries: ColorEntry[] = colors.map((c) => ({
     hex: c.hex,
     name: c.name,
     role: c.role,
@@ -102,13 +115,14 @@ export function PaletteDisplay({
       {/* Color Swatches */}
       <div className="p-4 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          {palette.colors.map((color) => (
+          {colors.map((color, i) => (
             <ColorCard
               key={color.role}
               hex={color.hex}
               name={color.name}
               role={color.role}
               size="lg"
+              onChange={(newHex) => handleColorChange(i, newHex)}
             />
           ))}
         </div>
@@ -116,7 +130,7 @@ export function PaletteDisplay({
 
       {/* Wide strip preview */}
       <div className="h-3 flex overflow-hidden">
-        {palette.colors.map((color) => (
+        {colors.map((color) => (
           <div
             key={color.role}
             className="flex-1 transition-transform duration-300 hover:scale-y-125 origin-bottom"

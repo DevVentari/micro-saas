@@ -55,7 +55,7 @@ export function getContrastColor(hex: string): "black" | "white" {
   return luminance > 0.179 ? "black" : "white";
 }
 
-function hslToHex(h: number, s: number, l: number): string {
+export function hslToHex(h: number, s: number, l: number): string {
   const sNorm = s / 100;
   const lNorm = l / 100;
   const a = sNorm * Math.min(lNorm, 1 - lNorm);

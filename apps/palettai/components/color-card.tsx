@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, GripHorizontal } from "lucide-react";
 import { cn } from "@repo/ui";
-import { hexToRgb, hexToHsl, getContrastColor } from "@/lib/color-utils";
+import { hexToRgb, hexToHsl, hslToHex, getContrastColor } from "@/lib/color-utils";
 
 interface ColorCardProps {
   hex: string;
@@ -11,6 +11,7 @@ interface ColorCardProps {
   role: "primary" | "secondary" | "accent" | "neutral" | "background";
   className?: string;
   size?: "sm" | "md" | "lg";
+  onChange?: (hex: string) => void;
 }
 
 const roleLabels: Record<string, string> = {
@@ -29,24 +30,69 @@ const roleBadgeColors: Record<string, string> = {
   background: "bg-gray-400 text-white",
 };
 
-export function ColorCard({ hex, name, role, className, size = "md" }: ColorCardProps) {
+export function ColorCard({ hex, name, role, className, size = "md", onChange }: ColorCardProps) {
   const [copied, setCopied] = React.useState(false);
   const [hovered, setHovered] = React.useState(false);
+  const [currentHex, setCurrentHex] = React.useState(hex);
+  const [isDragging, setIsDragging] = React.useState(false);
 
-  const textColor = getContrastColor(hex);
-  const rgb = hexToRgb(hex);
-  const hsl = hexToHsl(hex);
+  // Sync with external prop changes (new palette generated)
+  React.useEffect(() => {
+    setCurrentHex(hex);
+  }, [hex]);
 
-  async function handleCopy(e: React.MouseEvent) {
-    e.stopPropagation();
+  const dragRef = React.useRef<{ startX: number; startY: number; startH: number; startL: number } | null>(null);
+  const wasDragRef = React.useRef(false);
+  const swatchRef = React.useRef<HTMLDivElement>(null);
+
+  const textColor = getContrastColor(currentHex);
+  const rgb = hexToRgb(currentHex);
+  const hsl = hexToHsl(currentHex);
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    const { h, s, l } = hexToHsl(currentHex);
+    dragRef.current = { startX: e.clientX, startY: e.clientY, startH: h, startL: l };
+    wasDragRef.current = false;
+    setIsDragging(false);
+    // Store saturation for the drag session
+    (dragRef.current as any).startS = s;
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!dragRef.current) return;
+
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+
+    if (!wasDragRef.current && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+    wasDragRef.current = true;
+    setIsDragging(true);
+
+    // Left/right = hue (1° per 2px), up/down = lightness (1% per 3px, inverted Y)
+    const newH = ((dragRef.current.startH + Math.round(dx / 2)) % 360 + 360) % 360;
+    const newL = Math.max(10, Math.min(95, dragRef.current.startL - Math.round(dy / 3)));
+    const s = (dragRef.current as any).startS;
+
+    const newHex = hslToHex(newH, s, newL);
+    setCurrentHex(newHex);
+    onChange?.(newHex);
+  }
+
+  function handlePointerUp() {
+    dragRef.current = null;
+    setIsDragging(false);
+  }
+
+  async function handleClick() {
+    if (wasDragRef.current) return; // was a drag, not a click
     try {
-      await navigator.clipboard.writeText(hex);
+      await navigator.clipboard.writeText(currentHex);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
       const el = document.createElement("textarea");
-      el.value = hex;
+      el.value = currentHex;
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
@@ -61,44 +107,68 @@ export function ColorCard({ hex, name, role, className, size = "md" }: ColorCard
   return (
     <div
       className={cn(
-        "group relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 cursor-pointer",
+        "group relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
+        isDragging ? "cursor-grabbing scale-[1.02]" : "cursor-grab",
         className
       )}
-      onClick={handleCopy}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      title={`Click to copy ${hex}`}
+      title={`Drag left/right to change hue, up/down for lightness. Click to copy ${currentHex}`}
     >
       {/* Color Swatch */}
       <div
-        className={cn("w-full relative transition-all duration-300", swatchHeight)}
-        style={{ backgroundColor: hex }}
+        ref={swatchRef}
+        className={cn("w-full relative select-none", swatchHeight)}
+        style={{ backgroundColor: currentHex, transition: isDragging ? "none" : "background-color 0.15s" }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onClick={handleClick}
       >
-        {/* Copy overlay */}
+        {/* Drag hint */}
         <div
           className={cn(
-            "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
-            hovered ? "opacity-100" : "opacity-0"
+            "absolute top-2 left-0 right-0 flex justify-center transition-opacity duration-200",
+            hovered && !isDragging ? "opacity-100" : "opacity-0"
           )}
-          style={{ backgroundColor: textColor === "white" ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.15)" }}
         >
-          {copied ? (
-            <Check
-              className="w-8 h-8 drop-shadow-md"
-              style={{ color: textColor === "white" ? "#fff" : "#000" }}
-            />
-          ) : (
-            <Copy
-              className="w-6 h-6 drop-shadow-md"
-              style={{ color: textColor === "white" ? "#fff" : "#000" }}
-            />
-          )}
+          <div
+            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm"
+            style={{
+              backgroundColor: textColor === "white" ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.35)",
+              color: textColor === "white" ? "#fff" : "#000",
+            }}
+          >
+            <GripHorizontal className="w-3 h-3" />
+            drag to adjust
+          </div>
         </div>
 
+        {/* Copy overlay (shown on hover, not dragging) */}
+        {!isDragging && (
+          <div
+            className={cn(
+              "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+              hovered ? "opacity-100" : "opacity-0"
+            )}
+            style={{ backgroundColor: textColor === "white" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)" }}
+          >
+            {copied ? (
+              <Check
+                className="w-8 h-8 drop-shadow-md"
+                style={{ color: textColor === "white" ? "#fff" : "#000" }}
+              />
+            ) : (
+              <Copy
+                className="w-6 h-6 drop-shadow-md opacity-60"
+                style={{ color: textColor === "white" ? "#fff" : "#000" }}
+              />
+            )}
+          </div>
+        )}
+
         {/* Hex label on swatch */}
-        <div
-          className="absolute bottom-2 left-0 right-0 flex items-center justify-center"
-        >
+        <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
           <span
             className={cn(
               "text-xs font-mono font-semibold px-2 py-0.5 rounded-full transition-all duration-200",
@@ -108,15 +178,13 @@ export function ColorCard({ hex, name, role, className, size = "md" }: ColorCard
               color: textColor === "white" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.7)",
             }}
           >
-            {hex.toUpperCase()}
+            {currentHex.toUpperCase()}
           </span>
         </div>
 
         {/* HSL/RGB on hover */}
-        {hovered && (
-          <div
-            className="absolute top-2 left-2 right-2 text-center"
-          >
+        {hovered && !isDragging && (
+          <div className="absolute top-8 left-2 right-2 text-center">
             <p
               className="text-xs font-mono opacity-90"
               style={{ color: textColor === "white" ? "#fff" : "#000" }}
@@ -131,6 +199,24 @@ export function ColorCard({ hex, name, role, className, size = "md" }: ColorCard
             </p>
           </div>
         )}
+
+        {/* Live HSL values while dragging */}
+        {isDragging && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+            <p
+              className="text-sm font-mono font-bold drop-shadow"
+              style={{ color: textColor === "white" ? "#fff" : "#000" }}
+            >
+              {currentHex.toUpperCase()}
+            </p>
+            <p
+              className="text-xs font-mono opacity-90"
+              style={{ color: textColor === "white" ? "#fff" : "#000" }}
+            >
+              H:{hsl.h}° S:{hsl.s}% L:{hsl.l}%
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Info panel */}
@@ -138,7 +224,7 @@ export function ColorCard({ hex, name, role, className, size = "md" }: ColorCard
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground truncate">{name}</p>
-            <p className="text-xs text-muted-foreground font-mono">{hex.toUpperCase()}</p>
+            <p className="text-xs text-muted-foreground font-mono">{currentHex.toUpperCase()}</p>
           </div>
           <div className="flex flex-col items-end gap-1 shrink-0">
             <span
