@@ -13,7 +13,8 @@
     "./navigation": "./src/navigation.tsx",
     "./footer": "./src/footer.tsx",
     "./pricing-card": "./src/pricing-card.tsx",
-    "./ad-banner": "./src/ad-banner.tsx"
+    "./ad-banner": "./src/ad-banner.tsx",
+    "./adsense-script": "./src/adsense-script.tsx"
   },
   "peerDependencies": {
     "next": ">=14",

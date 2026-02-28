@@ -21,4 +21,5 @@ export { Navigation } from "./navigation";
 export { Footer } from "./footer";
 export { PricingCard } from "./pricing-card";
 export { AdBanner } from "./ad-banner";
+export { AdSenseScript } from "./adsense-script";
 export { cn } from "./utils";

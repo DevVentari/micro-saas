@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@repo/auth";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
-import { Footer } from "@repo/ui";
+import { Footer, AdSenseScript } from "@repo/ui";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <AdSenseScript />
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
             <NavigationWrapper />

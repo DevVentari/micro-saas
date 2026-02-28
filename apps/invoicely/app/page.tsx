@@ -1,4 +1,4 @@
-import { AdBanner } from "@repo/ui";
+import { InvoicelyAdBanner } from "@/components/invoicely-ad-banner";
 import { InvoiceCreator } from "@/components/invoice-creator";
 import { FileText, Download, Shield, Zap, Users, Star } from "lucide-react";
 import Link from "next/link";
@@ -57,7 +57,7 @@ export default function HomePage() {
 
       {/* Ad Banner (free tier) */}
       <section className="container pb-6">
-        <AdBanner slot="invoicely-home-bottom" format="leaderboard" />
+        <InvoicelyAdBanner />
       </section>
 
       {/* Pro Upgrade CTA */}
