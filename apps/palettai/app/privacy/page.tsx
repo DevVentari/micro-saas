@@ -46,7 +46,7 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-5 mt-2 space-y-1 text-muted-foreground">
             <li><strong>Supabase</strong> — authentication and database storage</li>
             <li><strong>Stripe</strong> — payment processing (we never store card details)</li>
-            <li><strong>OpenAI</strong> — AI palette generation (prompts are sent to OpenAI's API)</li>
+            <li><strong>Google Gemini</strong> — AI palette generation (prompts are sent to Google's Gemini API)</li>
             <li><strong>Vercel</strong> — hosting and analytics</li>
             <li><strong>Google AdSense</strong> — advertising on the free tier</li>
           </ul>
