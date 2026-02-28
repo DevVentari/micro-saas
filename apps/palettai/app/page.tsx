@@ -151,7 +151,7 @@ export default function HomePage() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
               <Sparkles className="w-4 h-4" />
-              Powered by Claude AI
+              Powered by OpenAI
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-5">
               Generate Beautiful
@@ -232,7 +232,7 @@ export default function HomePage() {
               icon: <Sparkles className="w-5 h-5 text-violet-600" />,
               title: "AI-Powered",
               description:
-                "Claude AI understands context, mood, and aesthetics to generate cohesive, professional palettes.",
+                "OpenAI GPT understands context, mood, and aesthetics to generate cohesive, professional palettes.",
             },
             {
               icon: <Palette className="w-5 h-5 text-violet-600" />,

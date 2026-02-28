@@ -1,6 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export interface GeneratedPalette {
   paletteName: string;
@@ -33,25 +33,20 @@ Respond with this exact JSON structure (no markdown, just raw JSON):
   "description": "2-3 sentence explanation of the palette choices and why they work together"
 }`;
 
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+  const response = await client.chat.completions.create({
+    model: "gpt-4o-mini",
     max_tokens: 1024,
-    messages: [{ role: "user", content: userPrompt }],
-    system: systemPrompt,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    response_format: { type: "json_object" },
   });
 
-  const content = message.content[0];
-  if (content.type !== "text") {
-    throw new Error("Unexpected response type from Claude");
-  }
-
-  let text = content.text.trim();
-  // Strip any accidental markdown code fences
-  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  const text = response.choices[0]?.message?.content?.trim() ?? "";
 
   const parsed = JSON.parse(text) as GeneratedPalette;
 
-  // Validate structure
   if (
     !parsed.paletteName ||
     !Array.isArray(parsed.colors) ||
