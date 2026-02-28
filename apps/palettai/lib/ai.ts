@@ -1,6 +1,6 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export interface GeneratedPalette {
   paletteName: string;
@@ -33,17 +33,17 @@ Respond with this exact JSON structure (no markdown, just raw JSON):
   "description": "2-3 sentence explanation of the palette choices and why they work together"
 }`;
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    max_tokens: 1024,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ],
-    response_format: { type: "json_object" },
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction: systemPrompt,
+    generationConfig: {
+      responseMimeType: "application/json",
+      maxOutputTokens: 1024,
+    },
   });
 
-  const text = response.choices[0]?.message?.content?.trim() ?? "";
+  const result = await model.generateContent(userPrompt);
+  const text = result.response.text().trim();
 
   const parsed = JSON.parse(text) as GeneratedPalette;
 
