@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest) {
     const { data: invoices, error } = await supabase
       .from("invoices")
       .select(
-        "id, invoice_number, client_name, issue_date, due_date, amount, currency, status, created_at, data"
+        "id, invoice_number, client_name, amount:total_amount, currency, status, created_at, data"
       )
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -56,7 +56,17 @@ export async function GET(_request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ invoices });
+    // Extract issue_date/due_date from data JSONB for display
+    const mapped = invoices?.map((inv) => {
+      const d = inv.data as Record<string, unknown> | null;
+      return {
+        ...inv,
+        issue_date: d?.issueDate ?? "",
+        due_date: d?.dueDate ?? "",
+      };
+    });
+
+    return NextResponse.json({ invoices: mapped });
   } catch (error) {
     console.error("GET /api/invoices error:", error);
     return NextResponse.json(
@@ -113,9 +123,7 @@ export async function POST(request: NextRequest) {
         .from("invoices")
         .update({
           client_name,
-          issue_date,
-          due_date,
-          amount,
+          total_amount: amount,
           currency,
           status,
           data,
@@ -135,9 +143,7 @@ export async function POST(request: NextRequest) {
           user_id: user.id,
           invoice_number,
           client_name,
-          issue_date,
-          due_date,
-          amount,
+          total_amount: amount,
           currency,
           status: status ?? "draft",
           data,
