@@ -9,7 +9,7 @@ export default function PrivacyPage() {
   return (
     <div className="container max-w-3xl py-16">
       <h1 className="text-3xl font-bold text-foreground mb-2">Privacy Policy</h1>
-      <p className="text-sm text-muted-foreground mb-10">Last updated: February 2026</p>
+      <p className="text-sm text-muted-foreground mb-10">Last updated: March 2026</p>
 
       <div className="space-y-8 text-foreground">
         <section>
@@ -76,7 +76,14 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">7. Contact</h2>
+          <h2 className="text-xl font-semibold mb-3">7. Governing Law</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            This Privacy Policy is governed by the laws of New South Wales, Australia.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-3">8. Contact</h2>
           <p className="text-muted-foreground leading-relaxed">
             For privacy-related questions, contact us at{" "}
             <a href="mailto:privacy@invoicely.app" className="text-primary underline hover:no-underline">

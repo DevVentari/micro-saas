@@ -9,7 +9,7 @@ export default function TermsPage() {
   return (
     <div className="container max-w-3xl py-16">
       <h1 className="text-3xl font-bold text-foreground mb-2">Terms of Service</h1>
-      <p className="text-sm text-muted-foreground mb-10">Last updated: February 2026</p>
+      <p className="text-sm text-muted-foreground mb-10">Last updated: March 2026</p>
 
       <div className="space-y-8 text-foreground">
         <section>
@@ -94,7 +94,15 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">10. Contact</h2>
+          <h2 className="text-xl font-semibold mb-3">10. Governing Law</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            These Terms are governed by the laws of New South Wales, Australia. Any disputes will be
+            subject to the exclusive jurisdiction of the courts of New South Wales.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold mb-3">11. Contact</h2>
           <p className="text-muted-foreground leading-relaxed">
             For questions about these terms, contact us at{" "}
             <a href="mailto:legal@metatagz.com" className="text-primary underline hover:no-underline">
