@@ -152,7 +152,6 @@ export default function HomePage() {
             </div>
             <h1
               className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-5 leading-tight font-display"
-              style={{ fontFamily: "var(--font-display)" }}
             >
               Palettes with semantic roles —{" "}
               <span className="bg-gradient-to-r from-violet-400 to-purple-300 bg-clip-text text-transparent">
