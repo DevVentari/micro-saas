@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@repo/auth";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 import { Footer, AdSenseScript } from "@repo/ui";
 
 const inter = Inter({ subsets: ["latin"] });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "PalettAI – AI Color Palette Generator | Instant Beautiful Color Schemes",
@@ -34,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={fraunces.variable}>
       <body className={inter.className}>
         <AdSenseScript />
         <AuthProvider>
