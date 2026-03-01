@@ -68,36 +68,40 @@ export default function PricingPage() {
             ctaLabel="Start Generating"
           />
 
-          <PricingCard
-            name="Pro"
-            price={5}
-            description="For designers and teams who need unlimited creativity."
-            features={[
-              "Unlimited AI palette generations",
-              "No ads",
-              "Save palette collections",
-              "Team sharing",
-              "CSS Variables export",
-              "Tailwind Config export",
-              "Figma JSON export",
-              "SVG Palette export",
-              "JSON Array export",
-              "Custom palette naming",
-              "Priority support",
-            ]}
-            isPopular
-            isCurrent={isPro}
-            onSelect={handleUpgrade}
-            ctaLabel={
-              checkoutLoading
-                ? "Redirecting..."
-                : isPro
-                ? "Current Plan"
-                : user
-                ? "Upgrade to Pro"
-                : "Get Pro — $5/mo"
-            }
-          />
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 opacity-40 blur-lg" />
+            <PricingCard
+              name="Pro"
+              price={5}
+              description="For designers and teams who need unlimited creativity."
+              features={[
+                "Unlimited AI palette generations",
+                "No ads",
+                "Save palette collections",
+                "Team sharing",
+                "CSS Variables export",
+                "Tailwind Config export",
+                "Figma JSON export",
+                "SVG Palette export",
+                "JSON Array export",
+                "Custom palette naming",
+                "Priority support",
+              ]}
+              isPopular
+              isCurrent={isPro}
+              onSelect={handleUpgrade}
+              ctaLabel={
+                checkoutLoading
+                  ? "Redirecting..."
+                  : isPro
+                  ? "Current Plan"
+                  : user
+                  ? "Upgrade to Pro"
+                  : "Get Pro — $5/mo"
+              }
+              className="relative bg-slate-950 border-violet-700/60"
+            />
+          </div>
         </div>
 
         {/* FAQ / Features comparison */}
