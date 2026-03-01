@@ -112,11 +112,11 @@ export async function POST(request: NextRequest) {
 
       // Save to history for authenticated users (fire-and-forget)
       if (userId && supabaseForSave) {
-        supabaseForSave.from("meta_checks").insert({
+        Promise.resolve(supabaseForSave.from("meta_checks").insert({
           user_id: userId,
           url,
           results: result,
-        }).then().catch(console.error);
+        })).catch(console.error);
       }
 
       return NextResponse.json(
@@ -135,11 +135,11 @@ export async function POST(request: NextRequest) {
 
     // Save to history (fire-and-forget)
     if (userId && supabaseForSave) {
-      supabaseForSave.from("meta_checks").insert({
+      Promise.resolve(supabaseForSave.from("meta_checks").insert({
         user_id: userId,
         url,
         results: result,
-      }).then().catch(console.error);
+      })).catch(console.error);
     }
 
     return NextResponse.json({ ...result, remaining: null });
