@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import { generatePalette } from "@/lib/ai";
 
 // Simple in-memory rate limiter (resets on server restart)
@@ -49,29 +51,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const ip = getClientIp(request);
-    const { allowed, remaining } = checkRateLimit(ip);
-
-    if (!allowed) {
-      return NextResponse.json(
-        {
-          error: "Daily limit reached. You can generate 5 palettes per day for free. Upgrade to Pro for unlimited generations.",
-          limitReached: true,
+    // Check if user is Pro (bypasses rate limit)
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return cookieStore.getAll(); },
+          setAll(cookiesToSet) {
+            try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch { }
+          },
         },
-        {
-          status: 429,
-          headers: { "X-RateLimit-Remaining": "0" },
-        }
+      }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    let isPro = false;
+    if (user) {
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("plan, status")
+        .eq("user_id", user.id)
+        .eq("app", "palettai")
+        .maybeSingle();
+      isPro = sub?.plan === "pro" && sub?.status === "active";
+    }
+
+    // Apply rate limit only for non-Pro users
+    if (!isPro) {
+      const ip = getClientIp(request);
+      const { allowed, remaining } = checkRateLimit(ip);
+
+      if (!allowed) {
+        return NextResponse.json(
+          {
+            error: "Daily limit reached. You can generate 5 palettes per day for free. Upgrade to Pro for unlimited generations.",
+            limitReached: true,
+          },
+          {
+            status: 429,
+            headers: { "X-RateLimit-Remaining": "0" },
+          }
+        );
+      }
+
+      const palette = await generatePalette(prompt.trim(), mood || "balanced");
+      return NextResponse.json(
+        { palette, remaining },
+        { headers: { "X-RateLimit-Remaining": String(remaining) } }
       );
     }
 
+    // Pro user — unlimited
     const palette = await generatePalette(prompt.trim(), mood || "balanced");
-
     return NextResponse.json(
-      { palette, remaining },
-      {
-        headers: { "X-RateLimit-Remaining": String(remaining) },
-      }
+      { palette, remaining: -1 },
+      { headers: { "X-RateLimit-Remaining": "unlimited" } }
     );
   } catch (error: unknown) {
     console.error("Generate palette error:", error);

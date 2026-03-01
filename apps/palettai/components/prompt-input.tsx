@@ -10,6 +10,7 @@ interface PromptInputProps {
   onGenerated: (palette: GeneratedPalette, remaining: number) => void;
   onError?: (error: string) => void;
   initialRemaining?: number;
+  isPro?: boolean;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ export function PromptInput({
   onGenerated,
   onError,
   initialRemaining = 5,
+  isPro = false,
   className,
 }: PromptInputProps) {
   const [prompt, setPrompt] = React.useState("");
@@ -156,20 +158,26 @@ export function PromptInput({
         {/* Generate button + rate limit info */}
         <div className="flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground">
-            <span
-              className={cn(
-                "font-semibold",
-                remaining <= 1 ? "text-orange-500" : "text-primary"
-              )}
-            >
-              {remaining}
-            </span>{" "}
-            / 5 free generations today
+            {isPro ? (
+              <span className="font-semibold text-violet-600">Unlimited generations</span>
+            ) : (
+              <>
+                <span
+                  className={cn(
+                    "font-semibold",
+                    remaining <= 1 ? "text-orange-500" : "text-primary"
+                  )}
+                >
+                  {remaining}
+                </span>{" "}
+                / 5 free generations today
+              </>
+            )}
           </div>
 
           <Button
             type="submit"
-            disabled={!prompt.trim() || loading || remaining <= 0}
+            disabled={!prompt.trim() || loading || (!isPro && remaining <= 0)}
             className="flex items-center gap-2 min-w-[160px]"
           >
             {loading ? (
@@ -186,7 +194,7 @@ export function PromptInput({
           </Button>
         </div>
 
-        {remaining <= 0 && (
+        {!isPro && remaining <= 0 && (
           <div className="rounded-lg bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 px-4 py-3 text-sm text-orange-700 dark:text-orange-300">
             You have reached your daily limit of 5 free generations.{" "}
             <a href="/pricing" className="font-semibold underline hover:no-underline">

@@ -176,6 +176,7 @@ export default function HomePage() {
                 onGenerated={handleGenerated}
                 onError={handleError}
                 initialRemaining={remaining}
+                isPro={isPro}
               />
             </div>
 
