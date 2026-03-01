@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
     const cookieStore = cookies();
     let isAuthenticated = false;
     let isPro = false;
+    let userId: string | undefined;
+    let supabaseForSave: ReturnType<typeof createServerClient> | undefined;
 
     try {
       const supabase = createServerClient(
@@ -72,6 +74,8 @@ export async function POST(request: NextRequest) {
 
       if (user) {
         isAuthenticated = true;
+        userId = user.id;
+        supabaseForSave = supabase;
         const { data: subscription } = await supabase
           .from("subscriptions")
           .select("plan, status")
@@ -106,6 +110,15 @@ export async function POST(request: NextRequest) {
 
       const result = await fetchPageMeta(url);
 
+      // Save to history for authenticated users (fire-and-forget)
+      if (userId && supabaseForSave) {
+        supabaseForSave.from("meta_checks").insert({
+          user_id: userId,
+          url,
+          results: result,
+        }).then().catch(console.error);
+      }
+
       return NextResponse.json(
         { ...result, remaining: isAuthenticated ? null : remaining },
         {
@@ -119,6 +132,16 @@ export async function POST(request: NextRequest) {
 
     // Pro users: unlimited
     const result = await fetchPageMeta(url);
+
+    // Save to history (fire-and-forget)
+    if (userId && supabaseForSave) {
+      supabaseForSave.from("meta_checks").insert({
+        user_id: userId,
+        url,
+        results: result,
+      }).then().catch(console.error);
+    }
+
     return NextResponse.json({ ...result, remaining: null });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to fetch meta tags";
