@@ -229,22 +229,22 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             {
-              icon: <Sparkles className="w-5 h-5 text-violet-600" />,
-              title: "AI-Powered",
-              description:
-                "Google Gemini understands context, mood, and aesthetics to generate cohesive, professional palettes.",
-            },
-            {
               icon: <Palette className="w-5 h-5 text-violet-600" />,
-              title: "5 Colors + Roles",
+              title: "Semantic Roles, Not Just Hex",
               description:
-                "Every palette includes primary, secondary, accent, neutral, and background — everything you need.",
+                "Every colour gets a role: primary, secondary, accent, neutral, background. Drop it straight into your design system — no guessing which colour goes where.",
             },
             {
               icon: <Download className="w-5 h-5 text-violet-600" />,
-              title: "Instant Export",
+              title: "Export to Your Stack",
               description:
-                "Copy CSS variables, Tailwind config, Figma JSON, SVG, or raw JSON with one click.",
+                "Copy CSS variables, Tailwind config, Figma JSON, SVG, or raw JSON with one click. Ready to paste into your codebase.",
+            },
+            {
+              icon: <Sparkles className="w-5 h-5 text-violet-600" />,
+              title: "AI That Understands Context",
+              description:
+                "Google Gemini understands mood, aesthetics, and brand language to generate palettes that actually make sense together.",
             },
           ].map((feature) => (
             <div
