@@ -282,14 +282,22 @@ export default function HomePage() {
                 className="bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 {/* Color strip */}
-                <div className="flex h-20">
+                <div className="flex h-36">
                   {sample.colors.map((color) => (
                     <div
                       key={color.role}
-                      className="flex-1"
+                      className="relative flex-1 group"
                       style={{ backgroundColor: color.hex }}
-                      title={color.name}
-                    />
+                    >
+                      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-black/30">
+                        <span className="text-white text-[10px] font-mono font-semibold leading-tight px-1 text-center">
+                          {color.role}
+                        </span>
+                        <span className="text-white/80 text-[9px] font-mono">
+                          {color.hex}
+                        </span>
+                      </div>
+                    </div>
                   ))}
                 </div>
                 {/* Info */}
