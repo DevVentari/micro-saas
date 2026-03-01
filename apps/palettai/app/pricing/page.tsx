@@ -46,7 +46,7 @@ export default function PricingPage() {
             Choose your plan
           </h1>
           <p className="text-muted-foreground text-lg">
-            Start free. Upgrade when you need more.
+            Free forever. Upgrade for unlimited generations and all export formats.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function PricingPage() {
               "5 AI palette generations per day",
               "CSS Variables export",
               "Click-to-copy hex codes",
-              "6 export formats (read-only)",
+              "Semantic colour roles (primary, secondary, accent...)",
               "Access to sample palettes",
             ]}
             isCurrent={!!user && !isPro && !loading}
@@ -171,8 +171,9 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-12">
-          Cancel any time. No contracts. Billed monthly via Stripe.
+        <p className="text-center text-sm text-muted-foreground mt-12">
+          Cancel any time. No contracts. Billed monthly via Stripe.{" "}
+          <span className="font-medium text-foreground">No questions asked.</span>
         </p>
       </div>
     </div>
