@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Sparkles, Zap, Palette, Download, Shield } from "lucide-react";
+import { Sparkles, Zap, Palette, Download } from "lucide-react";
 import { cn } from "@repo/ui";
 import { AdBanner } from "@repo/ui";
 import { useAuth } from "@repo/auth";
@@ -217,6 +217,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Trust bar */}
+      <div className="border-y border-border bg-muted/20">
+        <div className="container py-4 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+          <span><span className="font-semibold text-foreground">10,000+</span> palettes generated</span>
+          <span className="hidden sm:inline text-border">|</span>
+          <span>Free · No signup · Instant</span>
+          <span className="hidden sm:inline text-border">|</span>
+          <span>Exports to <span className="font-medium text-foreground">CSS · Tailwind · Figma · JSON</span></span>
+        </div>
+      </div>
+
       {/* Ad Banner (free tier) */}
       {!isPro && (
         <section className="container py-4">
@@ -327,25 +338,24 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="container py-16 text-center">
-        <div className="max-w-xl mx-auto">
-          <Shield className="w-10 h-10 text-violet-600 mx-auto mb-4" />
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-            Want unlimited palettes?
+      <section className="bg-[#0D0D10] py-20 text-center">
+        <div className="container max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display">
+            Stop hitting the daily limit.
           </h2>
-          <p className="text-muted-foreground mb-6">
-            Upgrade to Pro for unlimited AI generations, no ads, save your favorite palettes,
-            and export in all formats.
+          <p className="text-slate-400 mb-8">
+            Pro is unlimited generations, no ads, saved palettes, and all export formats — for the price of a coffee.
           </p>
           <a
             href="/pricing"
             className={cn(
-              "inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-200 hover:-translate-y-0.5"
+              "inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-violet-700/40 hover:shadow-xl hover:shadow-violet-600/50 transition-all duration-200 hover:-translate-y-0.5 text-base"
             )}
           >
             <Zap className="w-4 h-4" />
-            Upgrade to Pro — $5/mo
+            Go Pro — $5/mo
           </a>
+          <p className="text-slate-600 text-xs mt-4">Cancel any time. No contracts.</p>
         </div>
       </section>
 
