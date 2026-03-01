@@ -137,41 +137,41 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero / Generator Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-violet-50 via-white to-white dark:from-violet-950/20 dark:via-background dark:to-background py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-[#0D0D10] py-16 sm:py-28">
         {/* Background decoration */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-        >
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-br from-violet-200/40 to-purple-200/20 rounded-full blur-3xl" />
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-violet-800/20 to-purple-900/10 rounded-full blur-3xl" />
         </div>
 
         <div className="container relative">
           {/* Heading */}
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 bg-violet-900/40 text-violet-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-violet-700/40">
               <Sparkles className="w-4 h-4" />
-              Powered by Gemini
+              AI palettes built for developers
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-5">
-              Generate Beautiful
-              <span className="block bg-gradient-to-r from-violet-600 to-purple-500 bg-clip-text text-transparent">
-                Color Palettes with AI
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-5 leading-tight font-display"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Palettes with semantic roles —{" "}
+              <span className="bg-gradient-to-r from-violet-400 to-purple-300 bg-clip-text text-transparent">
+                primary, secondary, accent
               </span>
+              , ready to paste.
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Describe your brand, mood, or style — get a perfect 5-color palette instantly.
-              Export to CSS, Tailwind, Figma, and more.
+            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
+              Describe your brand and get a 5-colour palette with named roles, exportable as CSS variables, Tailwind config, Figma JSON, and more.
             </p>
-            <p className="text-sm text-muted-foreground mt-3">
-              No signup required for{" "}
-              <span className="font-semibold text-violet-600">5 free generations/day</span>
+            <p className="text-base text-slate-300 mt-4 font-medium">
+              No signup required —{" "}
+              <span className="text-violet-400">5 free generations/day</span>
             </p>
           </div>
 
           {/* Generator card */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-xl p-6 sm:p-8">
+            <div className="bg-slate-900 rounded-2xl border border-slate-700/60 shadow-xl p-6 sm:p-8">
               <PromptInput
                 onGenerated={handleGenerated}
                 onError={handleError}
