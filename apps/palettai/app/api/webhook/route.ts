@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
     const app = subscription.metadata?.app ?? "palettai";
     if (!userId) { console.warn("[webhook] No userId in subscription metadata"); return; }
 
+    type AnyRecord = Record<string, number | undefined>;
+    const periodEnd =
+      (subscription as unknown as AnyRecord).current_period_end ??
+      (subscription.items?.data?.[0] as unknown as AnyRecord)?.current_period_end;
+
     await supabase.from("subscriptions").upsert(
       {
         user_id: userId,
@@ -43,7 +48,7 @@ export async function POST(request: NextRequest) {
         stripe_subscription_id: subscription.id,
         plan: subscription.status === "active" || subscription.status === "trialing" ? "pro" : "free",
         status: subscription.status,
-        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
       },
       { onConflict: "user_id,app" }
     );

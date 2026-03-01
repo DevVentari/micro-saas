@@ -47,6 +47,11 @@ export async function POST(request: NextRequest) {
           return;
         }
 
+        type AnyRecord = Record<string, number | undefined>;
+        const periodEnd =
+          (subscription as unknown as AnyRecord).current_period_end ??
+          (subscription.items?.data?.[0] as unknown as AnyRecord)?.current_period_end;
+
         await supabase.from("subscriptions").upsert(
           {
             user_id: userId,
@@ -55,9 +60,7 @@ export async function POST(request: NextRequest) {
             stripe_subscription_id: subscription.id,
             plan: "pro",
             status: subscription.status,
-            current_period_end: new Date(
-              subscription.current_period_end * 1000
-            ).toISOString(),
+            current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
           },
           { onConflict: "user_id,app" }
         );
@@ -75,15 +78,18 @@ export async function POST(request: NextRequest) {
             ? "pro"
             : "free";
 
+        type AnyRecord = Record<string, number | undefined>;
+        const periodEnd =
+          (subscription as unknown as AnyRecord).current_period_end ??
+          (subscription.items?.data?.[0] as unknown as AnyRecord)?.current_period_end;
+
         await supabase
           .from("subscriptions")
           .update({
             stripe_subscription_id: subscription.id,
             plan,
             status: subscription.status,
-            current_period_end: new Date(
-              subscription.current_period_end * 1000
-            ).toISOString(),
+            current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
           })
           .eq("user_id", userId)
           .eq("app", app);
