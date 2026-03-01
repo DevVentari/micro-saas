@@ -1,33 +1,42 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@repo/auth";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export async function GET(_request: NextRequest) {
   try {
     const cookieStore = cookies();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const supabase = createServerClient(cookieStore as any) as any;
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return cookieStore.getAll(); },
+          setAll(cookiesToSet) {
+            try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch { }
+          },
+        },
+      }
+    );
 
-    if (!session?.user) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
       return NextResponse.json({ subscription: null });
     }
 
     const { data: subscription, error } = await supabase
       .from("subscriptions")
       .select("*")
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .eq("app", "metatagz")
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== "PGRST116") {
+    if (error) {
       console.error("[subscription] Supabase error:", error);
     }
 
-    return NextResponse.json({ subscription: subscription || null });
+    return NextResponse.json({ subscription: subscription ?? null });
   } catch (err) {
     console.error("[subscription] Error:", err);
     return NextResponse.json({ subscription: null });

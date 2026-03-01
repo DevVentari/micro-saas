@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { fetchPageMeta } from "@/lib/meta-fetcher";
-import { createServerClient } from "@repo/auth";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 // In-memory rate limiter for anonymous users (by IP)
@@ -56,24 +56,30 @@ export async function POST(request: NextRequest) {
     let isPro = false;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const supabase = createServerClient(cookieStore as any) as any;
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() { return cookieStore.getAll(); },
+            setAll(cookiesToSet) {
+              try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch { }
+            },
+          },
+        }
+      );
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (session?.user) {
+      if (user) {
         isAuthenticated = true;
-        // Check subscription status
         const { data: subscription } = await supabase
           .from("subscriptions")
           .select("plan, status")
-          .eq("user_id", session.user.id)
+          .eq("user_id", user.id)
           .eq("app", "metatagz")
-          .single();
+          .maybeSingle();
 
-        isPro =
-          subscription?.plan === "pro" && subscription?.status === "active";
+        isPro = subscription?.plan === "pro" && subscription?.status === "active";
       }
     } catch {
       // Auth check failed; treat as anonymous
