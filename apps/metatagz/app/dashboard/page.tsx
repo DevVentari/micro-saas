@@ -86,6 +86,8 @@ export default function DashboardPage() {
   const [historyLoading, setHistoryLoading] = React.useState(false);
   const [historyError, setHistoryError] = React.useState<string | null>(null);
   const [showAnalyzer, setShowAnalyzer] = React.useState(false);
+  const [managingPortal, setManagingPortal] = React.useState(false);
+  const [portalError, setPortalError] = React.useState<string | null>(null);
 
   // Redirect to login if not authenticated
   React.useEffect(() => {
@@ -118,6 +120,32 @@ export default function DashboardPage() {
 
     loadHistory();
   }, [user, isPro]);
+
+  const handleManageSubscription = async () => {
+    setManagingPortal(true);
+    setPortalError(null);
+    try {
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        console.error("Failed to open billing portal:", data);
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      const data = await res.json();
+      if (!data.url) {
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Failed to open billing portal:", err);
+      setPortalError("Could not open billing portal. Please try again.");
+      setManagingPortal(false);
+    }
+  };
 
   if (authLoading || subLoading) {
     return (
@@ -272,11 +300,35 @@ export default function DashboardPage() {
           </div>
           <div className="flex justify-between items-center py-2 border-b">
             <span className="text-muted-foreground">Plan</span>
-            <span
-              className={`font-medium ${isPro ? "text-primary" : "text-foreground"}`}
-            >
-              {isPro ? "Pro" : "Free"}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-3">
+                <span
+                  className={`font-medium ${isPro ? "text-primary" : "text-foreground"}`}
+                >
+                  {isPro ? "Pro" : "Free"}
+                </span>
+                {isPro && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManageSubscription}
+                    disabled={managingPortal}
+                  >
+                    {managingPortal ? (
+                      <>
+                        <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                        Opening…
+                      </>
+                    ) : (
+                      "Manage subscription"
+                    )}
+                  </Button>
+                )}
+              </div>
+              {portalError && (
+                <p className="text-xs text-destructive mt-1">{portalError}</p>
+              )}
+            </div>
           </div>
           {!isPro && (
             <div className="pt-2">

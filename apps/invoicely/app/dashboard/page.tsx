@@ -96,6 +96,8 @@ export default function DashboardPage() {
   const [invoicesLoading, setInvoicesLoading] = useState(true);
   const [invoicesError, setInvoicesError] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const [managingPortal, setManagingPortal] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -125,6 +127,32 @@ export default function DashboardPage() {
 
     fetchInvoices();
   }, [user]);
+
+  const handleManageSubscription = async () => {
+    setManagingPortal(true);
+    setPortalError(null);
+    try {
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        console.error("Failed to open billing portal:", data);
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      const data = await res.json();
+      if (!data.url) {
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Failed to open billing portal:", err);
+      setPortalError("Could not open billing portal. Please try again.");
+      setManagingPortal(false);
+    }
+  };
 
   const handleStatusChange = async (
     invoiceId: string,
@@ -199,12 +227,36 @@ export default function DashboardPage() {
             </span>
           </p>
         </div>
-        <Link href="/">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Invoice
-          </Button>
-        </Link>
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-3">
+            {isPro && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleManageSubscription}
+                disabled={managingPortal}
+              >
+                {managingPortal ? (
+                  <>
+                    <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+                    Opening…
+                  </>
+                ) : (
+                  "Manage subscription"
+                )}
+              </Button>
+            )}
+            <Link href="/">
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Create Invoice
+              </Button>
+            </Link>
+          </div>
+          {portalError && (
+            <p className="text-xs text-destructive mt-1">{portalError}</p>
+          )}
+        </div>
       </div>
 
       {/* Pro upgrade prompt for free users */}

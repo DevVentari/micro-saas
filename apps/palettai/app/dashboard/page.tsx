@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Download, Palette, Lock, Calendar } from "lucide-react";
+import { Plus, Download, Palette, Lock, Calendar, Loader2 } from "lucide-react";
 import { cn } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@repo/ui";
@@ -32,6 +32,34 @@ export default function DashboardPage() {
   const [palettes, setPalettes] = React.useState<SavedPalette[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [managingPortal, setManagingPortal] = React.useState(false);
+  const [portalError, setPortalError] = React.useState<string | null>(null);
+
+  const handleManageSubscription = async () => {
+    setManagingPortal(true);
+    setPortalError(null);
+    try {
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        console.error("Failed to open billing portal:", data);
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      const data = await res.json();
+      if (!data.url) {
+        setPortalError("Could not open billing portal. Please try again.");
+        setManagingPortal(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Failed to open billing portal:", err);
+      setPortalError("Could not open billing portal. Please try again.");
+      setManagingPortal(false);
+    }
+  };
 
   // Redirect to login if not authenticated
   React.useEffect(() => {
@@ -97,13 +125,37 @@ export default function DashboardPage() {
               </span>
             </p>
           </div>
-          <Button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" />
-            Generate New Palette
-          </Button>
+          <div className="flex flex-col items-end gap-1 self-start sm:self-auto">
+            <div className="flex items-center gap-3">
+              {isPro && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleManageSubscription}
+                  disabled={managingPortal}
+                >
+                  {managingPortal ? (
+                    <>
+                      <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                      Opening…
+                    </>
+                  ) : (
+                    "Manage subscription"
+                  )}
+                </Button>
+              )}
+              <Button
+                onClick={() => router.push("/")}
+                className="flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Generate New Palette
+              </Button>
+            </div>
+            {portalError && (
+              <p className="text-xs text-destructive mt-1">{portalError}</p>
+            )}
+          </div>
         </div>
 
         {/* Pro gate */}
