@@ -355,7 +355,7 @@ export default function HomePage() {
             <Zap className="w-4 h-4" />
             Go Pro — $5/mo
           </a>
-          <p className="text-slate-600 text-xs mt-4">Cancel any time. No contracts.</p>
+          <p className="text-slate-400 text-xs mt-4">Cancel any time. No contracts.</p>
         </div>
       </section>
 
