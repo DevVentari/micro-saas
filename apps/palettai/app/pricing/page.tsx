@@ -68,7 +68,14 @@ export default function PricingPage() {
             ctaLabel="Start Generating"
           />
 
-          <div className="relative">
+          <div
+            className="relative"
+            style={{
+              "--card-foreground": "210 40% 98%",
+              "--muted-foreground": "215 20% 65%",
+              "--foreground": "210 40% 98%",
+            } as React.CSSProperties}
+          >
             <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 opacity-40 blur-lg" />
             <PricingCard
               name="Pro"
