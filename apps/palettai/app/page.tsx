@@ -221,9 +221,9 @@ export default function HomePage() {
       <div className="border-y border-border bg-muted/20">
         <div className="container py-4 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
           <span><span className="font-semibold text-foreground">10,000+</span> palettes generated</span>
-          <span className="hidden sm:inline text-border">|</span>
+          <span className="hidden sm:inline text-muted-foreground">|</span>
           <span>Free · No signup · Instant</span>
-          <span className="hidden sm:inline text-border">|</span>
+          <span className="hidden sm:inline text-muted-foreground">|</span>
           <span>Exports to <span className="font-medium text-foreground">CSS · Tailwind · Figma · JSON</span></span>
         </div>
       </div>
