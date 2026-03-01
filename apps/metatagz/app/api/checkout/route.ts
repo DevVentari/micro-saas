@@ -1,29 +1,51 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { createCheckoutSession } from "@repo/billing";
-import { createServerClient } from "@repo/auth";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import { createCheckoutSession } from "@repo/billing";
 
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = cookies();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const supabase = createServerClient(cookieStore as any) as any;
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // ignore from Server Component
+            }
+          },
+        },
+      }
+    );
 
-    if (!session?.user) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const origin = request.headers.get("origin") || "http://localhost:3002";
+    const origin =
+      process.env.NEXT_PUBLIC_APP_URL ??
+      request.nextUrl.origin ??
+      "http://localhost:3002";
 
     const checkoutSession = await createCheckoutSession({
       app: "metatagz",
-      userId: session.user.id,
-      userEmail: session.user.email!,
-      successUrl: `${origin}/dashboard?upgrade=success`,
+      userId: user.id,
+      userEmail: user.email!,
+      successUrl: `${origin}/dashboard?upgraded=true`,
       cancelUrl: `${origin}/pricing?canceled=true`,
     });
 
