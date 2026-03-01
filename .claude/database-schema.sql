@@ -62,12 +62,13 @@ CREATE TABLE IF NOT EXISTS invoices (
   data JSONB NOT NULL,  -- Full InvoiceData object
   invoice_number TEXT,
   client_name TEXT,
-  total_amount NUMERIC,
+  amount NUMERIC,       -- renamed from total_amount for API consistency
   currency TEXT DEFAULT 'USD',
   status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'unpaid', 'paid')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- NOTE: existing DB has total_amount column; API uses PostgREST alias amount:total_amount
 
 CREATE TABLE IF NOT EXISTS clients (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
