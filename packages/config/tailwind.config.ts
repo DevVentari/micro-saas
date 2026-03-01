@@ -88,6 +88,7 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
     },
   },
