@@ -6,6 +6,7 @@ import { AuthProvider } from "@repo/auth";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 import { Footer, AdSenseScript } from "@repo/ui";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PaletteThemeProvider } from "@/components/palette-theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const fraunces = Fraunces({
@@ -46,6 +47,7 @@ export default function RootLayout({
         <Script src="/theme-init.js" strategy="beforeInteractive" />
         <AdSenseScript />
         <ThemeProvider>
+          <PaletteThemeProvider>
           <AuthProvider>
             <div className="min-h-screen flex flex-col">
               <NavigationWrapper />
@@ -53,6 +55,7 @@ export default function RootLayout({
               <Footer appName="PalettAI" />
             </div>
           </AuthProvider>
+          </PaletteThemeProvider>
         </ThemeProvider>
       </body>
     </html>

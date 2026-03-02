@@ -9,6 +9,7 @@ import { useSubscription } from "@repo/billing";
 import { PromptInput } from "@/components/prompt-input";
 import { PaletteDisplay } from "@/components/palette-display";
 import type { GeneratedPalette } from "@/lib/ai";
+import { usePaletteTheme } from "@/components/palette-theme-provider";
 
 // Sample palettes for the gallery
 const SAMPLE_PALETTES: Array<{
@@ -87,6 +88,7 @@ const SAMPLE_PALETTES: Array<{
 export default function HomePage() {
   const { user } = useAuth();
   const { isPro } = useSubscription("palettai", user?.id);
+  const { applyPalette } = usePaletteTheme();
   const [palette, setPalette] = React.useState<GeneratedPalette | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [remaining, setRemaining] = React.useState(5);
@@ -100,7 +102,7 @@ export default function HomePage() {
     setRemaining(newRemaining);
     setError(null);
     setSaveMessage(null);
-    // Scroll to palette
+    applyPalette(newPalette);
     setTimeout(() => {
       paletteRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
