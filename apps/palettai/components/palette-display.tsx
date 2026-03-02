@@ -8,6 +8,7 @@ import { ColorCard } from "./color-card";
 import { ExportMenu } from "./export-menu";
 import type { GeneratedPalette } from "@/lib/ai";
 import type { ColorEntry } from "@/lib/export";
+import { usePaletteTheme } from "./palette-theme-provider";
 
 interface PaletteDisplayProps {
   palette: GeneratedPalette;
@@ -29,16 +30,28 @@ export function PaletteDisplay({
   className,
 }: PaletteDisplayProps) {
   const [colors, setColors] = React.useState(palette.colors);
+  const colorsRef = React.useRef(palette.colors);
 
   // Reset when a new palette is generated
   React.useEffect(() => {
     setColors(palette.colors);
+    colorsRef.current = palette.colors;
   }, [palette]);
 
   function handleColorChange(index: number, newHex: string) {
-    setColors((prev) =>
-      prev.map((c, i) => (i === index ? { ...c, hex: newHex } : c))
-    );
+    setColors((prev) => {
+      const next = prev.map((c, i) => (i === index ? { ...c, hex: newHex } : c));
+      colorsRef.current = next;
+      return next;
+    });
+  }
+
+  const { updatePaletteColors, isPaletteActive } = usePaletteTheme();
+
+  function handleDragEnd() {
+    if (isPaletteActive) {
+      updatePaletteColors(colorsRef.current);
+    }
   }
 
   const colorEntries: ColorEntry[] = colors.map((c) => ({
@@ -52,7 +65,7 @@ export function PaletteDisplay({
   return (
     <div
       className={cn(
-        "animate-slide-up rounded-2xl border border-border bg-white dark:bg-gray-900 shadow-xl overflow-hidden",
+        "animate-slide-up rounded-2xl border border-border bg-white dark:bg-card shadow-xl overflow-hidden",
         className
       )}
     >
@@ -123,6 +136,7 @@ export function PaletteDisplay({
               role={color.role}
               size="lg"
               onChange={(newHex) => handleColorChange(i, newHex)}
+              onDragEnd={handleDragEnd}
             />
           ))}
         </div>
