@@ -139,24 +139,28 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero / Generator Section */}
-      <section className="relative overflow-hidden bg-background py-16 sm:py-28">
+      <section
+        className="relative overflow-hidden bg-background"
+        style={{ paddingTop: "var(--mood-hero-py, 7rem)", paddingBottom: "var(--mood-hero-py, 7rem)" }}
+      >
         {/* Background decoration */}
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-amber-500/15 to-orange-600/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-primary/15 to-accent/10 rounded-full blur-3xl" />
         </div>
 
         <div className="container relative">
           {/* Heading */}
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-amber-500/20">
+          <div className="text-center mx-auto mb-12" style={{ maxWidth: "var(--mood-hero-max, 48rem)" }}>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-primary/20">
               <Sparkles className="w-4 h-4" />
               AI palettes built for developers
             </div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-5 leading-tight font-display"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-5 leading-tight font-display"
+              style={{ letterSpacing: "var(--mood-tracking, -0.025em)", fontWeight: "var(--mood-weight, 700)" }}
             >
               Palettes with semantic roles —{" "}
-              <span className="bg-gradient-to-r from-amber-500 to-orange-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 primary, secondary, accent
               </span>
               , ready to paste.
@@ -166,13 +170,16 @@ export default function HomePage() {
             </p>
             <p className="text-base text-muted-foreground mt-4 font-medium">
               No signup required —{" "}
-              <span className="text-amber-500 dark:text-amber-400">5 free generations/day</span>
+              <span className="text-primary">5 free generations/day</span>
             </p>
           </div>
 
           {/* Generator card */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-card rounded-2xl border border-border shadow-xl p-6 sm:p-8">
+            <div
+              className="bg-card border border-border shadow-xl"
+              style={{ borderRadius: "var(--mood-radius, 1rem)", padding: "var(--mood-card-p, 1.5rem)" }}
+            >
               <PromptInput
                 onGenerated={handleGenerated}
                 onError={handleError}
@@ -238,23 +245,26 @@ export default function HomePage() {
       )}
 
       {/* Feature highlights */}
-      <section className="container py-16">
+      <section
+        className="container"
+        style={{ paddingTop: "var(--mood-section-py, 4rem)", paddingBottom: "var(--mood-section-py, 4rem)" }}
+      >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             {
-              icon: <Palette className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+              icon: <Palette className="w-5 h-5 text-primary" />,
               title: "Semantic Roles, Not Just Hex",
               description:
                 "Every colour gets a role: primary, secondary, accent, neutral, background. Drop it straight into your design system — no guessing which colour goes where.",
             },
             {
-              icon: <Download className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+              icon: <Download className="w-5 h-5 text-primary" />,
               title: "Export to Your Stack",
               description:
                 "Copy CSS variables, Tailwind config, Figma JSON, SVG, or raw JSON with one click. Ready to paste into your codebase.",
             },
             {
-              icon: <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+              icon: <Sparkles className="w-5 h-5 text-primary" />,
               title: "AI That Understands Context",
               description:
                 "Google Gemini understands mood, aesthetics, and brand language to generate palettes that actually make sense together.",
@@ -262,9 +272,10 @@ export default function HomePage() {
           ].map((feature) => (
             <div
               key={feature.title}
-              className="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-6 shadow-sm"
+              className="flex flex-col items-start gap-3 border border-border bg-card p-6 shadow-sm"
+              style={{ borderRadius: "var(--mood-radius, 0.75rem)" }}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-900/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                 {feature.icon}
               </div>
               <h3 className="font-semibold text-foreground">{feature.title}</h3>
@@ -350,7 +361,7 @@ export default function HomePage() {
           </p>
           <a
             href="/pricing"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-200 hover:-translate-y-0.5 text-base"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 transition-all duration-200 hover:-translate-y-0.5 text-base"
           >
             <Zap className="w-4 h-4" />
             Go Pro — $5/mo
