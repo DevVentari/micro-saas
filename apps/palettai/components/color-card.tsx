@@ -12,6 +12,7 @@ interface ColorCardProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   onChange?: (hex: string) => void;
+  onDragEnd?: () => void;
 }
 
 const roleLabels: Record<string, string> = {
@@ -30,7 +31,7 @@ const roleBadgeColors: Record<string, string> = {
   background: "bg-gray-400 text-white",
 };
 
-export function ColorCard({ hex, name, role, className, size = "md", onChange }: ColorCardProps) {
+export function ColorCard({ hex, name, role, className, size = "md", onChange, onDragEnd }: ColorCardProps) {
   const [copied, setCopied] = React.useState(false);
   const [hovered, setHovered] = React.useState(false);
   const [currentHex, setCurrentHex] = React.useState(hex);
@@ -80,8 +81,12 @@ export function ColorCard({ hex, name, role, className, size = "md", onChange }:
   }
 
   function handlePointerUp() {
+    const wasDrag = wasDragRef.current;
     dragRef.current = null;
     setIsDragging(false);
+    if (wasDrag) {
+      onDragEnd?.();
+    }
   }
 
   async function handleClick() {
