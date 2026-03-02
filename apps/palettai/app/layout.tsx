@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@repo/auth";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 import { Footer, AdSenseScript } from "@repo/ui";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const fraunces = Fraunces({
@@ -39,16 +41,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={fraunces.variable}>
+    <html lang="en" className={fraunces.variable} suppressHydrationWarning>
       <body className={inter.className}>
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
         <AdSenseScript />
-        <AuthProvider>
-          <div className="min-h-screen flex flex-col">
-            <NavigationWrapper />
-            <main className="flex-1">{children}</main>
-            <Footer appName="PalettAI" />
-          </div>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <div className="min-h-screen flex flex-col">
+              <NavigationWrapper />
+              <main className="flex-1">{children}</main>
+              <Footer appName="PalettAI" />
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ import baseConfig from "../../packages/config/tailwind.config";
 
 const config: Config = {
   ...baseConfig,
-  darkMode: "media",
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
