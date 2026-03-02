@@ -1,5 +1,5 @@
 import type { GeneratedPalette } from "@/lib/ai";
-import { hexToHsl } from "@/lib/color-utils";
+import { hexToHsl, hslToHex, getContrastColor } from "@/lib/color-utils";
 
 type ColorRole = "primary" | "secondary" | "accent" | "neutral" | "background";
 
@@ -24,16 +24,25 @@ interface ThemeVars {
 }
 
 function hsl(h: number, s: number, l: number): string {
-  return `${h} ${Math.round(s)}% ${Math.round(l)}%`;
+  return `${h % 360} ${Math.round(s)}% ${Math.round(l)}%`;
 }
 
 function fgFor(h: number, s: number, l: number): string {
-  return l > 50 ? hsl(h, s * 0.3, 5) : hsl(h, s * 0.3, 95);
+  const hex = hslToHex(h, s, l);
+  return getContrastColor(hex) === "black" ? hsl(h, s * 0.3, 5) : hsl(h, s * 0.3, 95);
 }
 
 export function deriveThemeVars(
   colors: GeneratedPalette["colors"]
 ): { light: ThemeVars; dark: ThemeVars } {
+  const REQUIRED_ROLES: ColorRole[] = ["primary", "secondary", "accent", "neutral", "background"];
+  const presentRoles = colors.map((c) => c.role);
+  for (const role of REQUIRED_ROLES) {
+    if (!presentRoles.includes(role)) {
+      throw new Error(`Palette missing required role: ${role}`);
+    }
+  }
+
   const byRole = Object.fromEntries(
     colors.map((c) => [c.role, hexToHsl(c.hex)])
   ) as Record<ColorRole, { h: number; s: number; l: number }>;
