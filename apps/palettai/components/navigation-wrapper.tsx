@@ -25,7 +25,7 @@ export function NavigationWrapper() {
     <Navigation
       appName="PalettAI"
       logo={
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 shadow-sm">
+        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm">
           <Palette className="w-4 h-4 text-white" />
         </div>
       }
