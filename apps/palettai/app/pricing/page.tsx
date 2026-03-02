@@ -34,11 +34,11 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-background to-background py-16 sm:py-24">
+    <div className="min-h-screen bg-background py-16 sm:py-24">
       <div className="container">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-amber-500/20">
             <Sparkles className="w-4 h-4" />
             Simple, transparent pricing
           </div>
@@ -76,7 +76,7 @@ export default function PricingPage() {
               "--foreground": "210 40% 98%",
             } as React.CSSProperties}
           >
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 opacity-40 blur-lg" />
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 opacity-40 blur-lg" />
             <PricingCard
               name="Pro"
               price={5}
@@ -106,7 +106,7 @@ export default function PricingPage() {
                   ? "Upgrade to Pro"
                   : "Get Pro — $5/mo"
               }
-              className="relative bg-slate-950 border-violet-700/60"
+              className="relative bg-card border-amber-700/60"
             />
           </div>
         </div>
@@ -119,13 +119,13 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               {
-                icon: <Zap className="w-4 h-4 text-violet-600" />,
+                icon: <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
                 title: "Unlimited Generations",
                 description:
                   "Never hit a daily cap. Generate as many palettes as you need, any time.",
               },
               {
-                icon: <Sparkles className="w-4 h-4 text-violet-600" />,
+                icon: <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
                 title: "Save Collections",
                 description:
                   "Save your favorite palettes and organize them into collections in your dashboard.",
@@ -134,7 +134,7 @@ export default function PricingPage() {
                 icon: (
                   <svg
                     viewBox="0 0 16 16"
-                    className="w-4 h-4 text-violet-600"
+                    className="w-4 h-4 text-amber-600 dark:text-amber-400"
                     fill="currentColor"
                   >
                     <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
@@ -148,7 +148,7 @@ export default function PricingPage() {
                 icon: (
                   <svg
                     viewBox="0 0 16 16"
-                    className="w-4 h-4 text-violet-600"
+                    className="w-4 h-4 text-amber-600 dark:text-amber-400"
                     fill="currentColor"
                   >
                     <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
@@ -168,7 +168,7 @@ export default function PricingPage() {
                 key={item.title}
                 className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card"
               >
-                <div className="mt-0.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
+                <div className="mt-0.5 flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-900/30">
                   {item.icon}
                 </div>
                 <div>
