@@ -1,5 +1,6 @@
 import type { GeneratedPalette } from "@/lib/ai";
 import { hexToHsl, hslToHex, getContrastColor } from "@/lib/color-utils";
+import { buildMoodVars } from "./mood-layout";
 
 type ColorRole = "primary" | "secondary" | "accent" | "neutral" | "background";
 
@@ -96,11 +97,13 @@ export function deriveThemeVars(
   return { light, dark };
 }
 
-export function buildStyleContent(light: ThemeVars, dark: ThemeVars): string {
+export function buildStyleContent(light: ThemeVars, dark: ThemeVars, mood?: string): string {
   const toRule = (vars: ThemeVars) =>
     Object.entries(vars)
       .map(([k, v]) => `  --${k}: ${v};`)
       .join("\n");
 
-  return `html[data-palette-active] {\n${toRule(light)}\n}\nhtml[data-palette-active].dark {\n${toRule(dark)}\n}`;
+  const moodVars = mood ? `\n${buildMoodVars(mood)}` : "";
+
+  return `html[data-palette-active] {\n${toRule(light)}${moodVars}\n}\nhtml[data-palette-active].dark {\n${toRule(dark)}\n}`;
 }
