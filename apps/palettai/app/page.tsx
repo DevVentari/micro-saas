@@ -137,34 +137,34 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero / Generator Section */}
-      <section className="relative overflow-hidden bg-[#0D0D10] py-16 sm:py-28">
+      <section className="relative overflow-hidden bg-background py-16 sm:py-28">
         {/* Background decoration */}
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-violet-800/20 to-purple-900/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-amber-500/15 to-orange-600/10 rounded-full blur-3xl" />
         </div>
 
         <div className="container relative">
           {/* Heading */}
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 bg-violet-900/40 text-violet-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-violet-700/40">
+            <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-600 dark:text-amber-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-amber-500/20">
               <Sparkles className="w-4 h-4" />
               AI palettes built for developers
             </div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-5 leading-tight font-display"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-5 leading-tight font-display"
             >
               Palettes with semantic roles —{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-purple-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-amber-500 to-orange-400 bg-clip-text text-transparent">
                 primary, secondary, accent
               </span>
               , ready to paste.
             </h1>
-            <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Describe your brand and get a 5-colour palette with named roles, exportable as CSS variables, Tailwind config, Figma JSON, and more.
             </p>
             <p className="text-base text-slate-300 mt-4 font-medium">
               No signup required —{" "}
-              <span className="text-violet-400">5 free generations/day</span>
+              <span className="text-amber-500 dark:text-amber-400">5 free generations/day</span>
             </p>
           </div>
 
@@ -240,19 +240,19 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             {
-              icon: <Palette className="w-5 h-5 text-violet-600" />,
+              icon: <Palette className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
               title: "Semantic Roles, Not Just Hex",
               description:
                 "Every colour gets a role: primary, secondary, accent, neutral, background. Drop it straight into your design system — no guessing which colour goes where.",
             },
             {
-              icon: <Download className="w-5 h-5 text-violet-600" />,
+              icon: <Download className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
               title: "Export to Your Stack",
               description:
                 "Copy CSS variables, Tailwind config, Figma JSON, SVG, or raw JSON with one click. Ready to paste into your codebase.",
             },
             {
-              icon: <Sparkles className="w-5 h-5 text-violet-600" />,
+              icon: <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
               title: "AI That Understands Context",
               description:
                 "Google Gemini understands mood, aesthetics, and brand language to generate palettes that actually make sense together.",
@@ -262,7 +262,7 @@ export default function HomePage() {
               key={feature.title}
               className="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-6 shadow-sm"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-900/30">
                 {feature.icon}
               </div>
               <h3 className="font-semibold text-foreground">{feature.title}</h3>
@@ -290,7 +290,7 @@ export default function HomePage() {
             {SAMPLE_PALETTES.map((sample) => (
               <div
                 key={sample.name}
-                className="bg-white dark:bg-gray-900 rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 {/* Color strip */}
                 <div className="flex h-36">
@@ -338,24 +338,22 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0D0D10] py-20 text-center">
+      <section className="bg-secondary py-20 text-center">
         <div className="container max-w-xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 font-display">
             Stop hitting the daily limit.
           </h2>
-          <p className="text-slate-400 mb-8">
+          <p className="text-muted-foreground mb-8">
             Pro is unlimited generations, no ads, saved palettes, and all export formats — for the price of a coffee.
           </p>
           <a
             href="/pricing"
-            className={cn(
-              "inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-violet-700/40 hover:shadow-xl hover:shadow-violet-600/50 transition-all duration-200 hover:-translate-y-0.5 text-base"
-            )}
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/40 transition-all duration-200 hover:-translate-y-0.5 text-base"
           >
             <Zap className="w-4 h-4" />
             Go Pro — $5/mo
           </a>
-          <p className="text-slate-400 text-xs mt-4">Cancel any time. No contracts.</p>
+          <p className="text-muted-foreground text-xs mt-4">Cancel any time. No contracts.</p>
         </div>
       </section>
 
