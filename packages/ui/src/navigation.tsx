@@ -61,7 +61,7 @@ export function Navigation({
         <div className="flex items-center gap-3">
           {rightExtra}
           {isPro && (
-            <span className="text-xs bg-brand-500 text-white px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">
               PRO
             </span>
           )}
