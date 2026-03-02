@@ -48,13 +48,13 @@ export default function RootLayout({
         <AdSenseScript />
         <ThemeProvider>
           <PaletteThemeProvider>
-          <AuthProvider>
-            <div className="min-h-screen flex flex-col">
-              <NavigationWrapper />
-              <main className="flex-1">{children}</main>
-              <Footer appName="PalettAI" />
-            </div>
-          </AuthProvider>
+            <AuthProvider>
+              <div className="min-h-screen flex flex-col">
+                <NavigationWrapper />
+                <main className="flex-1">{children}</main>
+                <Footer appName="PalettAI" />
+              </div>
+            </AuthProvider>
           </PaletteThemeProvider>
         </ThemeProvider>
       </body>
