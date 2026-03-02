@@ -97,12 +97,12 @@ export default function HomePage() {
 
   const paletteRef = React.useRef<HTMLDivElement>(null);
 
-  function handleGenerated(newPalette: GeneratedPalette, newRemaining: number) {
+  function handleGenerated(newPalette: GeneratedPalette, newRemaining: number, mood: string) {
     setPalette(newPalette);
     setRemaining(newRemaining);
     setError(null);
     setSaveMessage(null);
-    applyPalette(newPalette);
+    applyPalette(newPalette, mood);
     setTimeout(() => {
       paletteRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);

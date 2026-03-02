@@ -7,7 +7,7 @@ import { Button } from "@repo/ui";
 import type { GeneratedPalette } from "@/lib/ai";
 
 interface PromptInputProps {
-  onGenerated: (palette: GeneratedPalette, remaining: number) => void;
+  onGenerated: (palette: GeneratedPalette, remaining: number, mood: string) => void;
   onError?: (error: string) => void;
   initialRemaining?: number;
   isPro?: boolean;
@@ -68,7 +68,7 @@ export function PromptInput({
       }
 
       setRemaining(data.remaining ?? 0);
-      onGenerated(data.palette, data.remaining ?? 0);
+      onGenerated(data.palette, data.remaining ?? 0, mood);
     } catch {
       onError?.("Network error. Please check your connection and try again.");
     } finally {
