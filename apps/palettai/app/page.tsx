@@ -162,7 +162,7 @@ export default function HomePage() {
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Describe your brand and get a 5-colour palette with named roles, exportable as CSS variables, Tailwind config, Figma JSON, and more.
             </p>
-            <p className="text-base text-slate-300 mt-4 font-medium">
+            <p className="text-base text-muted-foreground mt-4 font-medium">
               No signup required —{" "}
               <span className="text-amber-500 dark:text-amber-400">5 free generations/day</span>
             </p>
@@ -170,7 +170,7 @@ export default function HomePage() {
 
           {/* Generator card */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-slate-900 rounded-2xl border border-slate-700/60 shadow-xl p-6 sm:p-8">
+            <div className="bg-card rounded-2xl border border-border shadow-xl p-6 sm:p-8">
               <PromptInput
                 onGenerated={handleGenerated}
                 onError={handleError}
