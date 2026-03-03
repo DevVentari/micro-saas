@@ -1,6 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const geminiKeys = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY_2,
+  process.env.GEMINI_API_KEY_3,
+].filter(Boolean) as string[];
+
+function getGenAI() {
+  const key = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
+  return new GoogleGenerativeAI(key);
+}
 
 export interface GeneratedPalette {
   paletteName: string;
@@ -33,7 +42,7 @@ Respond with this exact JSON structure (no markdown, just raw JSON):
   "description": "2-3 sentence explanation of the palette choices and why they work together"
 }`;
 
-  const model = genAI.getGenerativeModel({
+  const model = getGenAI().getGenerativeModel({
     model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
