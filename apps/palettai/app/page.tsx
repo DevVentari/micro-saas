@@ -89,6 +89,7 @@ export default function HomePage() {
   const { isPro } = useSubscription("palettai", user?.id);
   const { applyPalette } = usePaletteTheme();
   const [palette, setPalette] = React.useState<GeneratedPalette | null>(null);
+  const [currentMood, setCurrentMood] = React.useState<string>("balanced");
   const [error, setError] = React.useState<string | null>(null);
   const [remaining, setRemaining] = React.useState(5);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -98,6 +99,7 @@ export default function HomePage() {
 
   function handleGenerated(newPalette: GeneratedPalette, newRemaining: number, mood: string) {
     setPalette(newPalette);
+    setCurrentMood(mood);
     setRemaining(newRemaining);
     setError(null);
     setSaveMessage(null);
@@ -133,6 +135,12 @@ export default function HomePage() {
     } finally {
       setIsSaving(false);
     }
+  }
+
+  function handleOpenStudio() {
+    if (!palette) return;
+    sessionStorage.setItem("studio_palette", JSON.stringify({ palette, mood: currentMood }));
+    window.location.href = "/studio";
   }
 
   return (
@@ -232,6 +240,7 @@ export default function HomePage() {
               palette={palette}
               onRegenerate={() => setPalette(null)}
               onSave={handleSave}
+              onOpenStudio={handleOpenStudio}
               isSaving={isSaving}
               isPro={isPro}
               isLoggedIn={!!user}

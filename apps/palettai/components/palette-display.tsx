@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { RefreshCw, Save, Sparkles, Lock } from "lucide-react";
+import { RefreshCw, Save, Sparkles, Lock, ExternalLink } from "lucide-react";
 import { cn } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { ColorCard } from "./color-card";
@@ -14,6 +14,7 @@ interface PaletteDisplayProps {
   palette: GeneratedPalette;
   onRegenerate?: () => void;
   onSave?: () => void;
+  onOpenStudio?: () => void;
   isSaving?: boolean;
   isPro?: boolean;
   isLoggedIn?: boolean;
@@ -24,6 +25,7 @@ export function PaletteDisplay({
   palette,
   onRegenerate,
   onSave,
+  onOpenStudio,
   isSaving = false,
   isPro = false,
   isLoggedIn = false,
@@ -83,6 +85,18 @@ export function PaletteDisplay({
 
         <div className="flex items-center gap-2 shrink-0">
           <ExportMenu colors={colorEntries} />
+
+          {onOpenStudio && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenStudio}
+              className="flex items-center gap-2"
+            >
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Studio</span>
+            </Button>
+          )}
 
           {onRegenerate && (
             <Button
