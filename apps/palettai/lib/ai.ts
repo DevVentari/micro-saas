@@ -8,9 +8,9 @@ export interface GeneratedPalette {
   description: string;
 }
 
-const SYSTEM_PROMPT = `You are a color palette designer. You ONLY output valid JSON. No explanation, no markdown, no text outside JSON.
+const SYSTEM_PROMPT = `You are a color palette designer. Output JSON only.
 
-Output this exact structure:
+Required structure:
 {
   "paletteName": "string",
   "colors": [
@@ -28,39 +28,37 @@ export async function generatePalette(
   mood: string
 ): Promise<GeneratedPalette> {
   const res = await fetch(
-    `${process.env.OLLAMA_BASE_URL}/v1/chat/completions`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OLLAMA_API_KEY}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "qwen2.5:3b",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: [
           {
             role: "user",
-            content: `Generate a color palette for: ${prompt}. Mood: ${mood}.`,
+            parts: [{ text: `Generate a color palette for: ${prompt}. Mood: ${mood}.` }],
           },
         ],
-        response_format: { type: "json_object" },
-        max_tokens: 512,
-        temperature: 0.7,
+        generationConfig: {
+          responseMimeType: "application/json",
+          maxOutputTokens: 512,
+          temperature: 0.7,
+        },
       }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(15000),
     }
   );
 
   if (!res.ok) {
-    throw new Error(`Ollama error: ${res.status}`);
+    throw new Error(`Gemini error: ${res.status}`);
   }
 
   const data = await res.json() as {
-    choices: Array<{ message: { content: string } }>;
+    candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
   };
-  const content = data.choices[0]?.message?.content;
-  if (!content) throw new Error("Empty response from Ollama");
+  const content = data.candidates[0]?.content?.parts[0]?.text;
+  if (!content) throw new Error("Empty response from Gemini");
 
   const parsed = JSON.parse(content) as GeneratedPalette;
 
