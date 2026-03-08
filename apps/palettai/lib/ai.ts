@@ -1,16 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const geminiKeys = [
-  process.env.GEMINI_API_KEY,
-  process.env.GEMINI_API_KEY_2,
-  process.env.GEMINI_API_KEY_3,
-].filter(Boolean) as string[];
-
-function getGenAI() {
-  const key = geminiKeys[Math.floor(Math.random() * geminiKeys.length)];
-  return new GoogleGenerativeAI(key);
-}
-
 export interface GeneratedPalette {
   paletteName: string;
   colors: Array<{
@@ -21,40 +8,61 @@ export interface GeneratedPalette {
   description: string;
 }
 
+const SYSTEM_PROMPT = `You are a color palette designer. You ONLY output valid JSON. No explanation, no markdown, no text outside JSON.
+
+Output this exact structure:
+{
+  "paletteName": "string",
+  "colors": [
+    { "hex": "#RRGGBB", "name": "string", "role": "primary" },
+    { "hex": "#RRGGBB", "name": "string", "role": "secondary" },
+    { "hex": "#RRGGBB", "name": "string", "role": "accent" },
+    { "hex": "#RRGGBB", "name": "string", "role": "neutral" },
+    { "hex": "#RRGGBB", "name": "string", "role": "background" }
+  ],
+  "description": "2-3 sentences on why these colors work together"
+}`;
+
 export async function generatePalette(
   prompt: string,
   mood: string
 ): Promise<GeneratedPalette> {
-  const systemPrompt = `You are a professional color palette designer and expert. Generate cohesive, beautiful 5-color palettes based on user descriptions. You always respond with valid JSON only — no markdown, no explanation outside JSON. The JSON must contain exactly 5 colors with roles: primary, secondary, accent, neutral, background. Hex codes must be valid 6-digit hex values starting with #.`;
+  const res = await fetch(
+    `${process.env.OLLAMA_BASE_URL}/v1/chat/completions`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OLLAMA_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "qwen2.5:3b",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          {
+            role: "user",
+            content: `Generate a color palette for: ${prompt}. Mood: ${mood}.`,
+          },
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 512,
+        temperature: 0.7,
+      }),
+      signal: AbortSignal.timeout(30000),
+    }
+  );
 
-  const userPrompt = `Generate a color palette for: ${prompt}. Mood: ${mood || "balanced"}.
+  if (!res.ok) {
+    throw new Error(`Ollama error: ${res.status}`);
+  }
 
-Respond with this exact JSON structure (no markdown, just raw JSON):
-{
-  "paletteName": "descriptive name for the palette",
-  "colors": [
-    { "hex": "#HEXCODE", "name": "color name", "role": "primary" },
-    { "hex": "#HEXCODE", "name": "color name", "role": "secondary" },
-    { "hex": "#HEXCODE", "name": "color name", "role": "accent" },
-    { "hex": "#HEXCODE", "name": "color name", "role": "neutral" },
-    { "hex": "#HEXCODE", "name": "color name", "role": "background" }
-  ],
-  "description": "2-3 sentence explanation of the palette choices and why they work together"
-}`;
+  const data = await res.json() as {
+    choices: Array<{ message: { content: string } }>;
+  };
+  const content = data.choices[0]?.message?.content;
+  if (!content) throw new Error("Empty response from Ollama");
 
-  const model = getGenAI().getGenerativeModel({
-    model: "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-    generationConfig: {
-      responseMimeType: "application/json",
-      maxOutputTokens: 1024,
-    },
-  });
-
-  const result = await model.generateContent(userPrompt);
-  const text = result.response.text().trim();
-
-  const parsed = JSON.parse(text) as GeneratedPalette;
+  const parsed = JSON.parse(content) as GeneratedPalette;
 
   if (
     !parsed.paletteName ||

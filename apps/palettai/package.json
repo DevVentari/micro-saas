@@ -10,7 +10,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@repo/auth": "workspace:*",
     "@repo/billing": "workspace:*",
