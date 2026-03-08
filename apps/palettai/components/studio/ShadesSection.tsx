@@ -13,12 +13,13 @@ interface ShadesSectionProps {
 }
 
 export function ShadesSection({ palette }: ShadesSectionProps) {
-  const [copied, setCopied] = React.useState<string | null>(null);
+  const [copiedHex, setCopiedHex] = React.useState<string | null>(null);
+  const [copiedCss, setCopiedCss] = React.useState(false);
 
   function handleCopy(hex: string) {
     navigator.clipboard.writeText(hex).then(() => {
-      setCopied(hex);
-      setTimeout(() => setCopied(null), 1500);
+      setCopiedHex(hex);
+      setTimeout(() => setCopiedHex(null), 1500);
     });
   }
 
@@ -50,17 +51,18 @@ export function ShadesSection({ palette }: ShadesSectionProps) {
                 {shades.map((shade, i) => {
                   const label = SHADE_LABELS[i];
                   const textColor = getContrastColor(shade);
-                  const isCopied = copied === shade;
+                  const isCopied = copiedHex === shade;
                   return (
                     <button
                       key={label}
                       className={cn(
                         "group flex-1 flex flex-col items-center justify-end py-3 px-1 transition-all",
-                        "hover:flex-[1.4] focus:outline-none"
+                        "hover:flex-[1.4] focus-visible:ring-2 focus-visible:ring-white/70"
                       )}
                       style={{ backgroundColor: shade }}
                       onClick={() => handleCopy(shade)}
                       title={`${color.role}-${label}: ${shade}`}
+                      aria-label={`${color.role}-${label}: ${shade}`}
                     >
                       <span
                         className="text-[10px] font-mono opacity-0 group-hover:opacity-100 transition-opacity"
@@ -100,12 +102,12 @@ export function ShadesSection({ palette }: ShadesSectionProps) {
                 })
                 .join("\n");
               navigator.clipboard.writeText(`:root {\n${vars}\n}`);
-              setCopied("css");
-              setTimeout(() => setCopied(null), 1500);
+              setCopiedCss(true);
+              setTimeout(() => setCopiedCss(false), 1500);
             }}
           >
-            {copied === "css" ? <Check className="size-3" /> : <Copy className="size-3" />}
-            {copied === "css" ? "Copied!" : "Copy all"}
+            {copiedCss ? <Check className="size-3" /> : <Copy className="size-3" />}
+            {copiedCss ? "Copied!" : "Copy all"}
           </button>
         </div>
         <pre className="text-xs text-muted-foreground overflow-x-auto max-h-32">
