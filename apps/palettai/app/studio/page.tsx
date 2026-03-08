@@ -131,29 +131,45 @@ export default function StudioPage() {
         </div>
 
         {/* Lazy sections — only mount when first visited */}
-        <React.Suspense fallback={<SectionSkeleton />}>
-          {!isProLoading && visitedTabs.has("moodboard") && (
-            <div className={activeTab === "moodboard" ? "block" : "hidden"}>
-              <ProGate isPro={isPro} featureName="AI Moodboard">
+        {visitedTabs.has("moodboard") && (
+          <div className={activeTab === "moodboard" ? "block" : "hidden"}>
+            {!isProLoading && isPro ? (
+              <React.Suspense fallback={<SectionSkeleton />}>
                 <MoodboardSection palette={palette} mood={mood} />
+              </React.Suspense>
+            ) : (
+              <ProGate isPro={isPro ?? false} featureName="AI Moodboard">
+                <MoodboardPlaceholder />
               </ProGate>
-            </div>
-          )}
-          {!isProLoading && visitedTabs.has("stylecard") && (
-            <div className={activeTab === "stylecard" ? "block" : "hidden"}>
-              <ProGate isPro={isPro} featureName="Style Card">
+            )}
+          </div>
+        )}
+        {visitedTabs.has("stylecard") && (
+          <div className={activeTab === "stylecard" ? "block" : "hidden"}>
+            {!isProLoading && isPro ? (
+              <React.Suspense fallback={<SectionSkeleton />}>
                 <StyleCardSection palette={palette} mood={mood} />
+              </React.Suspense>
+            ) : (
+              <ProGate isPro={isPro ?? false} featureName="Style Card">
+                <StyleCardPlaceholder />
               </ProGate>
-            </div>
-          )}
-          {!isProLoading && visitedTabs.has("components") && (
-            <div className={activeTab === "components" ? "block" : "hidden"}>
-              <ProGate isPro={isPro} featureName="Component Preview">
+            )}
+          </div>
+        )}
+        {visitedTabs.has("components") && (
+          <div className={activeTab === "components" ? "block" : "hidden"}>
+            {!isProLoading && isPro ? (
+              <React.Suspense fallback={<SectionSkeleton />}>
                 <ComponentPreviewSection palette={palette} />
+              </React.Suspense>
+            ) : (
+              <ProGate isPro={isPro ?? false} featureName="Component Preview">
+                <ComponentsPlaceholder />
               </ProGate>
-            </div>
-          )}
-        </React.Suspense>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
@@ -169,6 +185,47 @@ function SectionSkeleton() {
           <div key={i} className="h-40 rounded-xl bg-muted" />
         ))}
       </div>
+    </div>
+  );
+}
+
+function MoodboardPlaceholder() {
+  return (
+    <div className="columns-2 sm:columns-3 gap-3 space-y-3">
+      {[180, 240, 160, 200, 220, 180, 160, 240].map((h, i) => (
+        <div key={i} className="break-inside-avoid rounded-xl bg-muted" style={{ height: h }} />
+      ))}
+    </div>
+  );
+}
+
+function StyleCardPlaceholder() {
+  return (
+    <div className="rounded-2xl border border-border overflow-hidden">
+      <div className="h-16 bg-muted" />
+      <div className="p-8 space-y-6">
+        <div className="h-8 w-48 rounded-lg bg-muted" />
+        <div className="h-4 w-full rounded-lg bg-muted" />
+        <div className="grid grid-cols-2 gap-6">
+          <div className="h-20 rounded-lg bg-muted" />
+          <div className="h-20 rounded-lg bg-muted" />
+        </div>
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-7 w-20 rounded-full bg-muted" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComponentsPlaceholder() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="rounded-xl border border-border bg-card p-5 h-24" />
+      ))}
     </div>
   );
 }
