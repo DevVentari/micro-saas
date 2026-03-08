@@ -27,38 +27,34 @@ export async function generatePalette(
   prompt: string,
   mood: string
 ): Promise<GeneratedPalette> {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: `Generate a color palette for: ${prompt}. Mood: ${mood}.` }],
-          },
-        ],
-        generationConfig: {
-          responseMimeType: "application/json",
-          maxOutputTokens: 512,
-          temperature: 0.7,
-        },
-      }),
-      signal: AbortSignal.timeout(15000),
-    }
-  );
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: `Generate a color palette for: ${prompt}. Mood: ${mood}.` },
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 512,
+      temperature: 0.7,
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
 
   if (!res.ok) {
-    throw new Error(`Gemini error: ${res.status}`);
+    throw new Error(`OpenAI error: ${res.status}`);
   }
 
   const data = await res.json() as {
-    candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
+    choices: Array<{ message: { content: string } }>;
   };
-  const content = data.candidates[0]?.content?.parts[0]?.text;
-  if (!content) throw new Error("Empty response from Gemini");
+  const content = data.choices[0]?.message?.content;
+  if (!content) throw new Error("Empty response from OpenAI");
 
   const parsed = JSON.parse(content) as GeneratedPalette;
 
