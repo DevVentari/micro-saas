@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Sparkles, Loader2 } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { cn } from "@repo/ui";
 import { Button } from "@repo/ui";
 import type { GeneratedPalette } from "@/lib/ai";
@@ -45,6 +46,7 @@ export function PromptInput({
   const [mood, setMood] = React.useState<string>("Professional");
   const [loading, setLoading] = React.useState(false);
   const [remaining, setRemaining] = React.useState(initialRemaining);
+  const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
 
   const MAX_CHARS = 500;
 
@@ -57,7 +59,7 @@ export function PromptInput({
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt.trim(), mood }),
+        body: JSON.stringify({ prompt: prompt.trim(), mood, turnstileToken }),
       });
 
       const data = await res.json();
@@ -155,6 +157,13 @@ export function PromptInput({
           </div>
         </div>
 
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onSuccess={(token) => setTurnstileToken(token)}
+          onExpire={() => setTurnstileToken(null)}
+          options={{ theme: "auto" }}
+        />
+
         {/* Generate button + rate limit info */}
         <div className="flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground">
@@ -177,7 +186,7 @@ export function PromptInput({
 
           <Button
             type="submit"
-            disabled={!prompt.trim() || loading || (!isPro && remaining <= 0)}
+            disabled={!prompt.trim() || loading || (!isPro && remaining <= 0) || !turnstileToken}
             className="flex items-center gap-2 min-w-[160px]"
           >
             {loading ? (

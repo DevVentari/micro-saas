@@ -4,6 +4,22 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { generatePalette } from "@/lib/ai";
 
+async function verifyTurnstile(token: string): Promise<boolean> {
+  const res = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: process.env.TURNSTILE_SECRET_KEY!,
+        response: token,
+      }),
+    }
+  );
+  const data = await res.json() as { success: boolean };
+  return data.success;
+}
+
 // Simple in-memory rate limiter (resets on server restart)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
@@ -35,7 +51,7 @@ function getClientIp(request: NextRequest): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prompt, mood } = body as { prompt: string; mood?: string };
+    const { prompt, mood, turnstileToken } = body as { prompt: string; mood?: string; turnstileToken?: string };
 
     if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
       return NextResponse.json(
@@ -49,6 +65,14 @@ export async function POST(request: NextRequest) {
         { error: "Prompt must be 500 characters or less." },
         { status: 400 }
       );
+    }
+
+    if (!turnstileToken) {
+      return NextResponse.json({ error: "Bot verification required." }, { status: 400 });
+    }
+    const turnstileValid = await verifyTurnstile(turnstileToken);
+    if (!turnstileValid) {
+      return NextResponse.json({ error: "Bot verification failed. Please try again." }, { status: 403 });
     }
 
     // Check if user is Pro (bypasses rate limit)
