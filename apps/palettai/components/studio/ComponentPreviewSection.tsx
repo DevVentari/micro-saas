@@ -16,6 +16,7 @@ export function ComponentPreviewSection({ palette }: ComponentPreviewSectionProp
   const background = palette.colors.find((c) => c.role === "background")?.hex ?? "#fff";
 
   const primaryText = getContrastColor(primary) === "black" ? "#111" : "#fff";
+  const secondaryText = getContrastColor(secondary) === "black" ? "#111" : "#fff";
   const bgText = getContrastColor(background) === "black" ? "#111" : "#fff";
 
   const cssVars: React.CSSProperties = {
@@ -43,20 +44,23 @@ export function ComponentPreviewSection({ palette }: ComponentPreviewSectionProp
           <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Buttons</h3>
           <div className="flex flex-wrap gap-3">
             <button
+              type="button"
               className="rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: primary, color: primaryText }}
             >
               Primary Action
             </button>
             <button
+              type="button"
               className="rounded-lg px-4 py-2 text-sm font-medium border-2 transition-opacity hover:opacity-80"
               style={{ borderColor: primary, color: primary, backgroundColor: "transparent" }}
             >
               Ghost Button
             </button>
             <button
+              type="button"
               className="rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
-              style={{ backgroundColor: secondary, color: getContrastColor(secondary) === "black" ? "#111" : "#fff" }}
+              style={{ backgroundColor: secondary, color: secondaryText }}
             >
               Secondary
             </button>
@@ -131,9 +135,10 @@ export function ComponentPreviewSection({ palette }: ComponentPreviewSectionProp
                 {palette.paletteName}
               </h4>
               <p className="text-sm" style={{ color: getContrastColor(background) === "black" ? "#666" : "#aaa" }}>
-                {palette.description.slice(0, 80)}…
+                {palette.description.length > 80 ? `${palette.description.slice(0, 80)}…` : palette.description}
               </p>
               <button
+                type="button"
                 className="mt-2 rounded-lg px-3 py-1.5 text-xs font-medium"
                 style={{ backgroundColor: primary, color: primaryText }}
               >
