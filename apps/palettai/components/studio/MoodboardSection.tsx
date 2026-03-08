@@ -20,19 +20,25 @@ export function MoodboardSection({ palette, mood }: MoodboardSectionProps) {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    const controller = new AbortController();
     const primaryHex = palette.colors.find((c) => c.role === "primary")?.hex ?? palette.colors[0].hex;
     fetch("/api/studio/moodboard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ paletteName: palette.paletteName, mood, primaryHex }),
+      signal: controller.signal,
     })
       .then((r) => r.json() as Promise<{ images?: MoodImage[]; error?: string }>)
       .then((data) => {
         if (data.error) throw new Error(data.error);
         setImages(data.images ?? []);
       })
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : "Failed to load moodboard"))
+      .catch((e: unknown) => {
+        if (e instanceof Error && e.name === "AbortError") return;
+        setError(e instanceof Error ? e.message : "Failed to load moodboard");
+      })
       .finally(() => setLoading(false));
+    return () => controller.abort();
   }, [palette, mood]);
 
   return (
