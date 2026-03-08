@@ -159,7 +159,7 @@ export function PromptInput({
         <div className="flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground">
             {isPro ? (
-              <span className="font-semibold text-violet-600">Unlimited generations</span>
+              <span className="font-semibold text-primary">Unlimited generations</span>
             ) : (
               <>
                 <span

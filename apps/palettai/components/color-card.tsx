@@ -24,11 +24,11 @@ const roleLabels: Record<string, string> = {
 };
 
 const roleBadgeColors: Record<string, string> = {
-  primary: "bg-violet-600 text-white",
-  secondary: "bg-indigo-500 text-white",
-  accent: "bg-pink-500 text-white",
-  neutral: "bg-slate-500 text-white",
-  background: "bg-gray-400 text-white",
+  primary: "bg-primary text-primary-foreground",
+  secondary: "bg-amber-600 text-white",
+  accent: "bg-orange-600 text-white",
+  neutral: "bg-zinc-600 text-white",
+  background: "bg-zinc-400 text-black",
 };
 
 export function ColorCard({ hex, name, role, className, size = "md", onChange, onDragEnd }: ColorCardProps) {
@@ -254,3 +254,4 @@ export function ColorCard({ hex, name, role, className, size = "md", onChange, o
     </div>
   );
 }
+

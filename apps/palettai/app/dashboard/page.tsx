@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Download, Palette, Lock, Calendar, Loader2 } from "lucide-react";
+import { Plus, Palette, Lock, Calendar, Loader2 } from "lucide-react";
 import { cn } from "@repo/ui";
 import { Button } from "@repo/ui";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@repo/ui";
@@ -61,7 +61,6 @@ export default function DashboardPage() {
     }
   };
 
-  // Redirect to login if not authenticated
   React.useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login?next=/dashboard");
@@ -93,10 +92,10 @@ export default function DashboardPage() {
 
   if (authLoading || subLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-muted-foreground">
-          <Palette className="w-8 h-8 animate-pulse text-violet-500" />
-          <p className="text-sm">Loading...</p>
+          <Palette className="size-8 animate-pulse text-primary" />
+          <p className="text-sm">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -105,70 +104,51 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-muted/20 py-8">
+    <div className="min-h-dvh bg-muted/20 py-8">
       <div className="container">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              My Palettes
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {user.email} &mdash;{" "}
-              <span
-                className={cn(
-                  "font-medium",
-                  isPro ? "text-violet-600" : "text-muted-foreground"
-                )}
-              >
+            <h1 className="text-balance text-2xl font-bold text-foreground sm:text-3xl">Palette Library</h1>
+            <p className="mt-1 text-muted-foreground">
+              {user.email} -{" "}
+              <span className={cn("font-medium", isPro ? "text-primary" : "text-muted-foreground")}>
                 {isPro ? "Pro Plan" : "Free Plan"}
               </span>
             </p>
           </div>
+
           <div className="flex flex-col items-end gap-1 self-start sm:self-auto">
             <div className="flex items-center gap-3">
               {isPro && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleManageSubscription}
-                  disabled={managingPortal}
-                >
+                <Button variant="outline" size="sm" onClick={handleManageSubscription} disabled={managingPortal}>
                   {managingPortal ? (
                     <>
-                      <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
-                      Opening…
+                      <Loader2 className="mr-1.5 size-3 animate-spin" />
+                      Opening...
                     </>
                   ) : (
                     "Manage subscription"
                   )}
                 </Button>
               )}
-              <Button
-                onClick={() => router.push("/")}
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
+              <Button onClick={() => router.push("/")} className="flex items-center gap-2">
+                <Plus className="size-4" />
                 Generate New Palette
               </Button>
             </div>
-            {portalError && (
-              <p className="text-xs text-destructive mt-1">{portalError}</p>
-            )}
+            {portalError && <p className="mt-1 text-xs text-destructive">{portalError}</p>}
           </div>
         </div>
 
-        {/* Pro gate */}
         {!isPro && (
-          <div className="mb-8 rounded-xl border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/50">
-              <Lock className="w-5 h-5 text-violet-600" />
+          <div className="mb-8 flex flex-col items-start gap-4 rounded-xl border border-primary/25 bg-card p-6 sm:flex-row sm:items-center">
+            <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+              <Lock className="size-5 text-primary" />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-foreground">Saving palettes requires Pro</p>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Upgrade to Pro to save unlimited palettes, organize collections, and share with
-                your team.
+              <p className="font-semibold text-foreground">Saving palettes is a Pro feature</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Upgrade to store unlimited palettes and reuse approved color systems across projects.
               </p>
             </div>
             <Button onClick={() => router.push("/pricing")} className="shrink-0">
@@ -177,35 +157,27 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Content */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-64 rounded-2xl bg-muted animate-pulse"
-              />
+              <div key={i} className="h-64 animate-pulse rounded-2xl bg-muted" />
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-16 text-muted-foreground">
-            <p className="text-red-500">{error}</p>
+          <div className="py-16 text-center text-muted-foreground">
+            <p className="text-destructive">{error}</p>
           </div>
         ) : palettes.length === 0 ? (
-          <div className="text-center py-20">
-            <Palette className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">No saved palettes yet</h2>
-            <p className="text-muted-foreground mb-6">
-              {isPro
-                ? "Generate a palette and save it to your collection."
-                : "Upgrade to Pro to start saving palettes."}
+          <div className="py-20 text-center">
+            <Palette className="mx-auto mb-4 size-16 text-muted-foreground/30" />
+            <h2 className="text-xl font-semibold text-foreground">No saved palettes yet</h2>
+            <p className="mb-6 mt-2 text-muted-foreground">
+              {isPro ? "Generate a palette and save it to your library." : "Upgrade to Pro to start saving palettes."}
             </p>
-            <Button onClick={() => router.push(isPro ? "/" : "/pricing")}>
-              {isPro ? "Generate a Palette" : "Upgrade to Pro"}
-            </Button>
+            <Button onClick={() => router.push(isPro ? "/" : "/pricing")}>{isPro ? "Generate a Palette" : "Upgrade to Pro"}</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {palettes.map((palette) => (
               <PaletteCard key={palette.id} palette={palette} />
             ))}
@@ -224,13 +196,12 @@ function PaletteCard({ palette }: { palette: SavedPalette }) {
   }));
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
-      {/* Color strip */}
+    <Card className="group overflow-hidden transition-shadow duration-200 hover:shadow-lg">
       <div className="flex h-24 overflow-hidden">
         {palette.colors.map((color) => (
           <div
             key={color.role}
-            className="flex-1 transition-transform duration-300 group-hover:scale-y-110 origin-top"
+            className="flex-1 origin-top transition-transform duration-200 group-hover:scale-y-110"
             style={{ backgroundColor: color.hex }}
             title={`${color.name} (${color.hex})`}
           />
@@ -238,33 +209,23 @@ function PaletteCard({ palette }: { palette: SavedPalette }) {
       </div>
 
       <CardHeader className="pb-2">
-        <CardTitle className="text-base truncate">{palette.name || palette.palette_name}</CardTitle>
-        {palette.description && (
-          <CardDescription className="text-xs line-clamp-2">
-            {palette.description}
-          </CardDescription>
-        )}
+        <CardTitle className="truncate text-base">{palette.name || palette.palette_name}</CardTitle>
+        {palette.description && <CardDescription className="line-clamp-2 text-xs">{palette.description}</CardDescription>}
       </CardHeader>
 
       <CardContent className="pt-0">
-        {/* Hex swatches row */}
-        <div className="flex gap-2 mb-3 flex-wrap">
+        <div className="mb-3 flex flex-wrap gap-2">
           {palette.colors.map((color) => (
             <div key={color.role} className="flex items-center gap-1">
-              <div
-                className="w-4 h-4 rounded-full border border-border/60 shadow-sm"
-                style={{ backgroundColor: color.hex }}
-                title={color.name}
-              />
-              <span className="text-xs font-mono text-muted-foreground">{color.hex}</span>
+              <div className="size-4 rounded-full border border-border/60 shadow-sm" style={{ backgroundColor: color.hex }} title={color.name} />
+              <span className="font-mono text-xs text-muted-foreground">{color.hex}</span>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Calendar className="w-3 h-3" />
+            <Calendar className="size-3" />
             {new Date(palette.created_at).toLocaleDateString(undefined, {
               month: "short",
               day: "numeric",

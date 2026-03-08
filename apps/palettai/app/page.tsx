@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Sparkles, Zap, Palette, Download } from "lucide-react";
+import { Sparkles, Zap, Palette, Download, CheckCircle2, FolderKanban, ShieldCheck } from "lucide-react";
 import { cn } from "@repo/ui";
 import { AdBanner } from "@repo/ui";
 import { useAuth } from "@repo/auth";
@@ -11,7 +11,6 @@ import { PaletteDisplay } from "@/components/palette-display";
 import type { GeneratedPalette } from "@/lib/ai";
 import { usePaletteTheme } from "@/components/palette-theme-provider";
 
-// Sample palettes for the gallery
 const SAMPLE_PALETTES: Array<{
   name: string;
   description: string;
@@ -137,208 +136,192 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero / Generator Section */}
-      <section
-        className="relative overflow-hidden bg-background"
-        style={{ paddingTop: "var(--mood-hero-py, 7rem)", paddingBottom: "var(--mood-hero-py, 7rem)" }}
-      >
-        {/* Background decoration */}
-        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-br from-primary/15 to-accent/10 rounded-full blur-3xl" />
-        </div>
-
-        <div className="container relative">
-          {/* Heading */}
-          <div className="text-center mx-auto mb-12" style={{ maxWidth: "var(--mood-hero-max, 48rem)" }}>
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-primary/20">
-              <Sparkles className="w-4 h-4" />
-              AI palettes built for developers
+    <div className="min-h-dvh bg-background">
+      <section className="container py-12 sm:py-16 lg:py-20">
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+          <div className="space-y-7 lg:col-span-7">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+              <Sparkles className="size-4" />
+              Professional color systems in seconds
             </div>
+
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-5 leading-tight font-display"
-              style={{ letterSpacing: "var(--mood-tracking, -0.025em)", fontWeight: "var(--mood-weight, 700)" }}
+              className="font-display text-balance text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl"
+              style={{ fontWeight: "var(--mood-weight, 700)" }}
             >
-              Palettes with semantic roles —{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                primary, secondary, accent
-              </span>
-              , ready to paste.
+              Build production-ready palettes with semantic roles, not random hex picks.
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Describe your brand and get a 5-colour palette with named roles, exportable as CSS variables, Tailwind config, Figma JSON, and more.
+
+            <p className="text-pretty max-w-2xl text-lg text-muted-foreground sm:text-xl">
+              Describe your product vibe and instantly get a 5-color system with role names, contrast-safe structure, and exports ready for your stack.
             </p>
-            <p className="text-base text-muted-foreground mt-4 font-medium">
-              No signup required —{" "}
-              <span className="text-primary">5 free generations/day</span>
-            </p>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                "Role-based output: primary, secondary, accent, neutral, background",
+                "One-click exports for CSS variables, Tailwind, Figma, JSON, and SVG",
+                "No signup required for free usage",
+                "Palette-aware live theming while you iterate",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-2 rounded-xl border border-border bg-card p-3">
+                  <CheckCircle2 className="mt-0.5 size-4 text-primary" />
+                  <span className="text-sm text-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {[
+                { label: "Palettes Generated", value: "10,000+" },
+                { label: "Generation Time", value: "< 5 sec" },
+                { label: "Export Formats", value: "6+" },
+                { label: "Free Daily", value: "5 / day" },
+              ].map((metric) => (
+                <div key={metric.label} className="rounded-xl border border-border bg-card p-3">
+                  <p className="text-lg font-semibold tabular-nums text-foreground">{metric.value}</p>
+                  <p className="text-xs text-muted-foreground">{metric.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Generator card */}
-          <div className="max-w-3xl mx-auto">
+          <div className="lg:col-span-5">
             <div
-              className="bg-card border border-border shadow-xl"
-              style={{ borderRadius: "var(--mood-radius, 1rem)", padding: "var(--mood-card-p, 1.5rem)" }}
+              className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6"
+              style={{ borderRadius: "var(--mood-radius, 1rem)" }}
             >
-              <PromptInput
-                onGenerated={handleGenerated}
-                onError={handleError}
-                initialRemaining={remaining}
-                isPro={isPro}
-              />
+              <h2 className="text-balance text-xl font-semibold text-foreground">Generate Your Palette</h2>
+              <p className="text-pretty mt-1 text-sm text-muted-foreground">
+                Start with your brand, product, or mood prompt and refine from there.
+              </p>
+
+              <div className="mt-5">
+                <PromptInput
+                  onGenerated={handleGenerated}
+                  onError={handleError}
+                  initialRemaining={remaining}
+                  isPro={isPro}
+                />
+              </div>
+
+              {error && (
+                <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+                  {error}
+                </div>
+              )}
+
+              {saveMessage && (
+                <div
+                  className={cn(
+                    "mt-4 rounded-xl border px-4 py-3 text-sm",
+                    saveMessage.includes("saved")
+                      ? "border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300"
+                      : "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
+                  )}
+                >
+                  {saveMessage}
+                </div>
+              )}
             </div>
-
-            {/* Error message */}
-            {error && (
-              <div className="mt-4 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-300">
-                {error}
-              </div>
-            )}
-
-            {/* Save feedback */}
-            {saveMessage && (
-              <div
-                className={cn(
-                  "mt-4 rounded-xl border px-4 py-3 text-sm",
-                  saveMessage.includes("saved")
-                    ? "bg-green-50 border-green-200 text-green-700 dark:bg-green-950 dark:border-green-800 dark:text-green-300"
-                    : "bg-red-50 border-red-200 text-red-700 dark:bg-red-950 dark:border-red-800 dark:text-red-300"
-                )}
-              >
-                {saveMessage}
-              </div>
-            )}
           </div>
-
-          {/* Generated palette */}
-          {palette && (
-            <div ref={paletteRef} className="max-w-5xl mx-auto mt-8">
-              <PaletteDisplay
-                palette={palette}
-                onRegenerate={() => setPalette(null)}
-                onSave={handleSave}
-                isSaving={isSaving}
-                isPro={isPro}
-                isLoggedIn={!!user}
-              />
-            </div>
-          )}
         </div>
+
+        {palette && (
+          <div ref={paletteRef} className="mx-auto mt-8 max-w-5xl">
+            <PaletteDisplay
+              palette={palette}
+              onRegenerate={() => setPalette(null)}
+              onSave={handleSave}
+              isSaving={isSaving}
+              isPro={isPro}
+              isLoggedIn={!!user}
+            />
+          </div>
+        )}
       </section>
 
-      {/* Trust bar */}
-      <div className="border-y border-border bg-muted/20">
-        <div className="container py-4 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-          <span><span className="font-semibold text-foreground">10,000+</span> palettes generated</span>
-          <span className="hidden sm:inline text-muted-foreground">|</span>
-          <span>Free · No signup · Instant</span>
-          <span className="hidden sm:inline text-muted-foreground">|</span>
-          <span>Exports to <span className="font-medium text-foreground">CSS · Tailwind · Figma · JSON</span></span>
-        </div>
-      </div>
-
-      {/* Ad Banner (free tier) */}
       {!isPro && (
-        <section className="container py-4">
+        <section className="container pb-6">
           <AdBanner slot="palettai-home-top" format="leaderboard" />
         </section>
       )}
 
-      {/* Feature highlights */}
-      <section
-        className="container"
-        style={{ paddingTop: "var(--mood-section-py, 4rem)", paddingBottom: "var(--mood-section-py, 4rem)" }}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            {
-              icon: <Palette className="w-5 h-5 text-primary" />,
-              title: "Semantic Roles, Not Just Hex",
-              description:
-                "Every colour gets a role: primary, secondary, accent, neutral, background. Drop it straight into your design system — no guessing which colour goes where.",
-            },
-            {
-              icon: <Download className="w-5 h-5 text-primary" />,
-              title: "Export to Your Stack",
-              description:
-                "Copy CSS variables, Tailwind config, Figma JSON, SVG, or raw JSON with one click. Ready to paste into your codebase.",
-            },
-            {
-              icon: <Sparkles className="w-5 h-5 text-primary" />,
-              title: "AI That Understands Context",
-              description:
-                "Google Gemini understands mood, aesthetics, and brand language to generate palettes that actually make sense together.",
-            },
-          ].map((feature) => (
-            <div
-              key={feature.title}
-              className="flex flex-col items-start gap-3 border border-border bg-card p-6 shadow-sm"
-              style={{ borderRadius: "var(--mood-radius, 0.75rem)" }}
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                {feature.icon}
-              </div>
-              <h3 className="font-semibold text-foreground">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Sample palettes gallery */}
-      <section className="bg-muted/30 py-16">
+      <section className="border-y border-border bg-muted/20 py-12 sm:py-14">
         <div className="container">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
-              Example Palettes
-            </h2>
-            <p className="text-muted-foreground">
-              Palettes generated by AI for different brands and moods
+          <div className="mb-7 text-center">
+            <h2 className="text-balance text-2xl font-bold text-foreground sm:text-3xl">Built for Product Teams, Not Just Inspiration Boards</h2>
+            <p className="text-pretty mx-auto mt-2 max-w-2xl text-muted-foreground">
+              PalettAI outputs palettes that map directly to UI systems, so design and engineering can ship faster.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icon: <Palette className="size-5 text-primary" />,
+                title: "Semantic Structure",
+                description: "Every color is assigned a functional role, making implementation predictable.",
+              },
+              {
+                icon: <Download className="size-5 text-primary" />,
+                title: "Engineering-Ready Exports",
+                description: "Export formats align with real frontend workflows, not design toy formats.",
+              },
+              {
+                icon: <FolderKanban className="size-5 text-primary" />,
+                title: "Save and Reuse",
+                description: "Pro users can save approved palettes and reuse them across projects.",
+              },
+              {
+                icon: <Sparkles className="size-5 text-primary" />,
+                title: "Prompt-Aware AI",
+                description: "Generation reflects product context, mood, and brand positioning in one pass.",
+              },
+              {
+                icon: <ShieldCheck className="size-5 text-primary" />,
+                title: "Consistent Quality",
+                description: "Color sets are balanced for readability and coherent visual hierarchy.",
+              },
+              {
+                icon: <Zap className="size-5 text-primary" />,
+                title: "Fast Iteration Loop",
+                description: "Go from prompt to shipped palette in minutes with regenerate and tweak controls.",
+              },
+            ].map((feature) => (
+              <div key={feature.title} className="rounded-2xl border border-border bg-card p-5">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">{feature.icon}</div>
+                <h3 className="mt-4 text-balance text-base font-semibold text-foreground">{feature.title}</h3>
+                <p className="text-pretty mt-1 text-sm text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-muted/30 py-14 sm:py-16">
+        <div className="container">
+          <div className="mb-10 text-center">
+            <h2 className="text-balance text-2xl font-bold text-foreground sm:text-3xl">Reference Output Quality</h2>
+            <p className="text-pretty mx-auto mt-2 max-w-2xl text-muted-foreground">
+              Examples generated from different product categories and brand directions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {SAMPLE_PALETTES.map((sample) => (
-              <div
-                key={sample.name}
-                className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300"
-              >
-                {/* Color strip */}
+              <div key={sample.name} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <div className="flex h-36">
                   {sample.colors.map((color) => (
-                    <div
-                      key={color.role}
-                      className="relative flex-1 group"
-                      style={{ backgroundColor: color.hex }}
-                    >
-                      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-black/30">
-                        <span className="text-white text-[10px] font-mono font-semibold leading-tight px-1 text-center">
-                          {color.role}
-                        </span>
-                        <span className="text-white/80 text-[9px] font-mono">
-                          {color.hex}
-                        </span>
-                      </div>
-                    </div>
+                    <div key={color.role} className="flex-1" style={{ backgroundColor: color.hex }} />
                   ))}
                 </div>
-                {/* Info */}
                 <div className="px-4 py-3">
-                  <h3 className="font-semibold text-sm text-foreground">{sample.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{sample.description}</p>
-                  {/* Hex chips */}
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <h3 className="text-sm font-semibold text-foreground">{sample.name}</h3>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{sample.description}</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {sample.colors.map((color) => (
-                      <span
-                        key={color.hex}
-                        className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground"
-                      >
-                        <span
-                          className="inline-block w-3 h-3 rounded-full border border-border/50"
-                          style={{ backgroundColor: color.hex }}
-                        />
+                      <span key={color.hex} className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground">
+                        <span className="inline-block size-3 rounded-full border border-border/50" style={{ backgroundColor: color.hex }} />
                         {color.hex}
                       </span>
                     ))}
@@ -350,29 +333,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-secondary py-20 text-center">
-        <div className="container max-w-xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 font-display">
-            Stop hitting the daily limit.
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            Pro is unlimited generations, no ads, saved palettes, and all export formats — for the price of a coffee.
+      <section className="container py-14 sm:py-16">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-secondary p-8 text-center sm:p-10">
+          <h2 className="font-display text-balance text-2xl font-bold text-foreground sm:text-3xl">Move from trial usage to production workflow.</h2>
+          <p className="text-pretty mx-auto mt-3 max-w-xl text-muted-foreground">
+            Pro gives unlimited generations, saved palettes, and all export formats so your team can standardize brand color decisions.
           </p>
           <a
             href="/pricing"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 transition-all duration-200 hover:-translate-y-0.5 text-base"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground"
           >
-            <Zap className="w-4 h-4" />
-            Go Pro — $5/mo
+            <Zap className="size-4" />
+            Upgrade to Pro - $5/mo
           </a>
-          <p className="text-muted-foreground text-xs mt-4">Cancel any time. No contracts.</p>
+          <p className="mt-4 text-xs text-muted-foreground">Cancel any time. No contracts.</p>
         </div>
       </section>
 
-      {/* Ad banner bottom */}
       {!isPro && (
-        <div className="container pb-6">
+        <div className="container pb-8">
           <AdBanner slot="palettai-home-bottom" format="banner" />
         </div>
       )}
