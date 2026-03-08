@@ -24,7 +24,7 @@ function loadGoogleFont(fontName: string) {
   const link = document.createElement("link");
   link.id = id;
   link.rel = "stylesheet";
-  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontName)}:wght@400;700&display=swap`;
+  link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@400;700&display=swap`;
   document.head.appendChild(link);
 }
 
@@ -37,6 +37,7 @@ export function StyleCardSection({ palette, mood }: StyleCardSectionProps) {
 
   React.useEffect(() => {
     const controller = new AbortController();
+    let cancelled = false;
     fetch("/api/studio/stylecard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -45,6 +46,7 @@ export function StyleCardSection({ palette, mood }: StyleCardSectionProps) {
     })
       .then((r) => r.json() as Promise<{ styleCard?: StyleCardData; error?: string }>)
       .then((d) => {
+        if (cancelled) return;
         if (d.error) throw new Error(d.error);
         if (d.styleCard) {
           setData(d.styleCard);
@@ -53,11 +55,17 @@ export function StyleCardSection({ palette, mood }: StyleCardSectionProps) {
         }
       })
       .catch((e: unknown) => {
+        if (cancelled) return;
         if (e instanceof Error && e.name === "AbortError") return;
         setError(e instanceof Error ? e.message : "Failed to load style card");
       })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [palette, mood]);
 
   async function handleExport() {
