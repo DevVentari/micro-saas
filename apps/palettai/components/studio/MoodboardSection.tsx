@@ -7,6 +7,8 @@ interface MoodImage {
   url: string;
   source: "unsplash" | "dalle";
   alt: string;
+  photographer?: string;
+  photographerUrl?: string;
 }
 
 interface MoodboardSectionProps {
@@ -77,6 +79,28 @@ export function MoodboardSection({ palette, mood }: MoodboardSectionProps) {
               {img.source === "dalle" && (
                 <div className="px-3 py-1.5 bg-primary/10 text-[10px] text-primary font-medium">
                   AI Generated
+                </div>
+              )}
+              {img.source === "unsplash" && img.photographer && (
+                <div className="px-3 py-1.5 bg-black/60 text-[10px] text-white/80">
+                  Photo by{" "}
+                  <a
+                    href={img.photographerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-white"
+                  >
+                    {img.photographer}
+                  </a>{" "}
+                  on{" "}
+                  <a
+                    href="https://unsplash.com?utm_source=palettai&utm_medium=referral"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-white"
+                  >
+                    Unsplash
+                  </a>
                 </div>
               )}
             </div>

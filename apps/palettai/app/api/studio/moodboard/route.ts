@@ -42,7 +42,13 @@ export async function POST(request: NextRequest) {
       }).then((r) => r.json() as Promise<{ data: Array<{ url: string }> }>),
     ]);
 
-    const images: Array<{ url: string; source: "unsplash" | "dalle"; alt: string }> = [];
+    const images: Array<{
+      url: string;
+      source: "unsplash" | "dalle";
+      alt: string;
+      photographer?: string;
+      photographerUrl?: string;
+    }> = [];
 
     // Add DALL-E image first (hero position)
     if (dalleResult.status === "fulfilled" && dalleResult.value?.data?.[0]?.url) {
@@ -63,6 +69,8 @@ export async function POST(request: NextRequest) {
           url: photo.urls.regular,
           source: "unsplash",
           alt: photo.alt_description ?? query,
+          photographer: photo.user.name,
+          photographerUrl: `${photo.user.links.html}?utm_source=palettai&utm_medium=referral`,
         });
       }
     }
